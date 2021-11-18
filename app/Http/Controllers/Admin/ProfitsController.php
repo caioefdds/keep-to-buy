@@ -39,23 +39,53 @@ class ProfitsController extends Controller
      */
     public function index()
     {
-        $dataTable = $this->getAll();
+        $dataTable = $this->treatInfo($this->getAll());
         return view('pages.profits.index', compact('dataTable'));
+    }
+
+    public function get($id)
+    {
+        return Profit::where([
+            ["profits.id", $id],
+            ["profits.user_id", Auth::id()]
+        ])
+            ->leftJoin('categories', 'categories.id', 'profits.category_id')
+            ->leftJoin('groups', 'groups.id', 'profits.group_id')
+            ->select('profits.*', 'categories.name as category_name', 'groups.name as group_name')
+        ->first();
+    }
+
+    public function getAll()
+    {
+        return Profit::where([
+            ["profits.user_id", Auth::id()]
+        ])
+            ->leftJoin('categories', 'categories.id', 'profits.category_id')
+            ->leftJoin('groups', 'groups.id', 'profits.group_id')
+            ->select('profits.*', 'categories.name as category_name', 'groups.name as group_name')
+        ->get();
     }
 
     /**
      * Retorna todos registros referentes ao usuário
      * @return mixed
      */
-    public function getAll()
+    public function treatInfo($data): array
     {
-        return Profit::where([
-            ["profits.user_id", Auth::user()->id]
-        ])
-            ->leftJoin('categories', 'categories.id', 'profits.category_id')
-            ->leftJoin('groups', 'groups.id', 'profits.group_id')
-            ->select('profits.*', 'categories.name as category_name', 'groups.name as group_name')
-        ->get();
+        if (empty($data)) {
+            return [];
+        }
+
+        $result = [];
+        foreach ($data as $key => $item) {
+            $result[$key] = $item;
+            $result[$key]['value'] = MoneyUtils::floatToString($item['value']);
+            $result[$key]['date'] = DateUtils::dateToString($item['date']);
+            $result[$key]['status'] = ($item['date'] == 1) ? "PAGO" : "PENDENTE";
+            $result[$key]['repeat'] = ($item['repeat']) ? "SIM" : "NÃO";
+        }
+
+        return $result;
     }
 
     /**
@@ -153,23 +183,21 @@ class ProfitsController extends Controller
     public function edit($id)
     {
         if (empty($id)) {
-            return Response::error([], "Parâmetros enviados incorretamente");
+            return view('livewire.error500');
+        }
+        $result = $this->get($id);
+
+        if (empty($result)) {
+            return view('livewire.error500');
         }
 
-        $data = Profit::where([
-            ["id", $id],
-            ["user_id", Auth::user()->id],
-        ])->first();
-        $data['date'] = DateUtils::formatDate($data['date']);
-
-        if (empty($data)) {
-            return Response::error([], "Nennhum registro correspondente!");
-        }
+        $result['value'] = MoneyUtils::floatToString($result['value']);
+        $result['date'] = DateUtils::dateToString($result['date']);
 
         $categories = $this->__categoryController->getAll();
         $groups = $this->__groupController->getAll();
 
-        return view('admin.profits.create', compact('data', 'categories', 'groups'));
+        return view('pages.profits.edit', compact('result', 'categories', 'groups'));
     }
 
     /**
@@ -185,15 +213,12 @@ class ProfitsController extends Controller
             'required' => "O :attribute é obrigatório"
         ]);
 
-        $data = Profit::where([
-            ["id", $validated['id']],
-            ["user_id", Auth::user()->id],
-        ])->delete();
+        $delete = $this->__profitService->deleteProfit($validated['id']);
 
-        if (empty($data)) {
-            return Response::error([], "Nennhum registro correspondente!");
+        if (!$delete) {
+            return Response::error([], "Erro ao excluir registro!");
         }
 
-        return Response::success($data, "Registro excluído com sucesso!");
+        return Response::success([], "Registro excluído com sucesso!");
     }
 }

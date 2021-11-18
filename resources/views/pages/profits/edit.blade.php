@@ -21,12 +21,14 @@
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="#">Recursos</a></li>
                 <li class="breadcrumb-item"><a href="/admin/profits">Receitas</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Incluir</li>
+                <li class="breadcrumb-item active" aria-current="page">Editar</li>
             </ol>
         </div>
     </div>
 
-    <p-profits-create></p-profits-create>
+    <p-profits-edit
+        data="{{ json_encode($result) }}"
+    ></p-profits-edit>
 
 
 @endsection('content')

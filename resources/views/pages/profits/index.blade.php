@@ -16,6 +16,13 @@
         <!-- INTERNAL SELECT2 CSS -->
         <link href="{{ asset('assets/plugins/select2/select2.min.css') }}" rel="stylesheet"/>
 
+    <style>
+        .icons-table {
+            font-size: 1.2rem;
+            padding: 0 0.3rem;
+        }
+    </style>
+
 @endsection
 
 @section('content')
@@ -39,43 +46,7 @@
 						</div>
 						<!-- PAGE-HEADER END -->
 
-						<!-- ROW-1 OPEN -->
-						<div class="row">
-                            <!-- Row -->
-                            <div class="row row-sm">
-                                <div class="col-lg-12">
-                                    <div class="card">
-                                        <div class="card-body">
-                                            <div class="table-responsive">
-                                                <table class="table table-bordered text-nowrap border-bottom w-100" id="responsive-datatable">
-                                                    <thead>
-                                                    <tr>
-                                                        <th class="wd-15p border-bottom-0">Nome</th>
-                                                        <th class="wd-15p border-bottom-0">Valor</th>
-                                                        <th class="wd-20p border-bottom-0">Data</th>
-                                                        <th class="wd-15p border-bottom-0">Status</th>
-                                                        <th class="wd-15p border-bottom-0">Repete</th>
-                                                    </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                    @foreach($dataTable as $item)
-                                                        <tr>
-                                                            <td>Bella</td>
-                                                            <td>Chloe</td>
-                                                            <td>System Developer</td>
-                                                            <td>2018/03/12</td>
-                                                            <td>$654,765</td>
-                                                        </tr>
-                                                    @endforeach
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <!-- End Row -->
-                        </div>
+						<p-profits-index data="{{ json_encode($dataTable) }}"></p-profits-index>
 
 @endsection('content')
 
@@ -102,5 +73,11 @@
     <!-- C3 CHART JS -->
     <script src="{{ asset('assets/plugins/charts-c3/d3.v5.min.js')}}"></script>
     <script src="{{ asset('assets/plugins/charts-c3/c3-chart.js')}}"></script>
+
+    <script type="text/javascript">
+        function deleteRegistry(id) {
+            $.jq
+        }
+    </script>
 
 @endsection

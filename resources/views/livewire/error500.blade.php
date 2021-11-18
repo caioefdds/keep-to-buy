@@ -14,10 +14,10 @@
 					 <div class="error-template">
 						 <h1 class="display-1 text-dark mb-2">500<span class="fs-20">error</span></h1>
 						 <h5 class="error-details text-dark">
-							 Sorry, an error has occured, Requested page not found!
+							 Desculpe, a página requisitada não está disponível
 						 </h5>
 						 <div class="text-center">
-							 <a class="btn btn-primary mt-5 mb-5" href="{{url('index')}}"> <i class="fa fa-long-arrow-left"></i> Back to Home </a>
+							 <a class="btn btn-primary mt-5 mb-5" href="{{url('index')}}"> <i class="fa fa-long-arrow-left"></i> Voltar para o início </a>
 						 </div>
 					 </div>
 				 </div>

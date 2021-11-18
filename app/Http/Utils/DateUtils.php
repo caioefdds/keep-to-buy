@@ -28,7 +28,8 @@ class DateUtils
     public static function dateToString($date)
     {
         if (!empty($date)) {
-            $array = explode("-", $date);
+            $formattedDate = self::formatDate($date);
+            $array = explode("-", $formattedDate);
 
             if (count($array) == 3) {
                 return $array[2] . "/" . $array[1] . "/" . $array[0];

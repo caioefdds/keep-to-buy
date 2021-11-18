@@ -154,7 +154,7 @@ Route::middleware('auth')->prefix('admin')->group(function () {
         Route::post('/create', [ProfitsController::class, 'create']);
         Route::get('/edit/{id}', [ProfitsController::class, 'edit']);
         Route::post('/update', [ProfitsController::class, 'update']);
-        Route::post('/delete', [ProfitsController::class, 'delete']);
+        Route::delete('/delete', [ProfitsController::class, 'delete']);
     });
 
     Route::prefix('expenses')->group(function () {

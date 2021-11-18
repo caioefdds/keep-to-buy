@@ -33,6 +33,20 @@ class ProfitRecordsServices
         return true;
     }
 
+    protected function deleteProfitRecords($profit_id): bool
+    {
+        $profitRecordsDelete = ProfitRecordItems::where([
+            ["user_id", Auth::id()],
+            ["profit_id", $profit_id],
+        ])->delete();
+
+        if (empty($profitRecordsDelete)) {
+            return false;
+        }
+
+        return true;
+    }
+
     private function insertProfitRecordsByDate($month, $year)
     {
         $getExistent = $this->__getExistentProfitRecord($month, $year);
