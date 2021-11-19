@@ -126,13 +126,13 @@ Route::get('/logout', [LoginController::class, 'logout']);
 
 /* Register Routes */
 Route::prefix('register')->group(function () {
-    Route::get('/', Register::class);
+    Route::get('/', Register::class)->name('register');
     Route::post('/', [RegisterController::class, 'register']);
 });
 
 /* Login Routes */
 Route::prefix('login')->group(function () {
-    Route::get('/', Login::class);
+    Route::get('/', Login::class)->name('login');
     Route::post('/', [LoginController::class, 'authenticate']);
 });
 

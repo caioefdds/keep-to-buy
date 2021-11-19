@@ -31,8 +31,8 @@
                                             <a href="#" class="icons-table text-warning" @click="editRegistry(item.id)">
                                                 <i class="side-menu__icon fa fa-edit"></i>
                                             </a>
-                                            <a href="#" class="icons-table text-danger" @click="deleteRegistry(item.id)">
-                                                <i class="side-menu__icon fa fa-trash"></i>
+                                            <a href="" data-bs-target="#modalDelete" data-bs-toggle="modal" class="icons-table text-danger">
+                                                <i class="side-menu__icon fa fa-trash" @click="setDeleteId(item.id)"></i>
                                             </a>
                                         </td>
                                     </tr>
@@ -43,7 +43,21 @@
                 </div>
             </div>
         </div>
-        <!-- End Row -->
+
+        <div class="modal fade"  id="modalDelete">
+            <div class="modal-dialog modal-dialog-centered text-center " role="document">
+                <div class="modal-content tx-size-sm">
+                    <div class="modal-body text-center p-4">
+                        <button aria-label="Close" class="btn-close" data-bs-dismiss="modal" @click="removeDeleteId()"><span aria-hidden="true">&times;</span></button>
+                        <i class="fe fe-x-square fs-100 text-danger lh-1 mb-5 d-inline-block"></i>
+                        <h4 class="text-danger tx-semibold">Você realmente deseja excluir?</h4>
+                        <p class="mg-b-20 mg-x-20">Ao excluir todos registros relacionados serão excluídos.</p>
+                        <button class="btn btn-danger pd-x-25" data-bs-dismiss="modal" @click="removeDeleteId()">Cancelar</button>
+                        <button class="btn btn-success pd-x-25" data-bs-dismiss="modal" @click="deleteRegistry()">Prosseguir</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -57,14 +71,21 @@ export default {
     },
     data() {
         return {
-            dataTable: JSON.parse(this.data)
+            dataTable: JSON.parse(this.data),
+            deleteId: null
         }
     },
     methods: {
-        deleteRegistry(id) {
+        setDeleteId(id) {
+            this.deleteId = id;
+        },
+        removeDeleteId() {
+            this.deleteId = null;
+        },
+        deleteRegistry() {
             this.axios.delete('/admin/profits/delete', {
                 data: {
-                    id: id
+                    id: this.deleteId
                 }
             }).then((response) => {
                 this.$toast.open(response.data.msg);

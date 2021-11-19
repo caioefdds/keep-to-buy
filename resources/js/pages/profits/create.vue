@@ -213,5 +213,11 @@ export default {
 </script>
 
 <style scoped>
-
+.card-pay .tabs-menu li a.active {
+    background: #006bab !important;
+    color: #fff;
+}
+.card-pay .tabs-menu li a {
+    color: black
+}
 </style>

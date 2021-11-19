@@ -27,7 +27,7 @@
                         <p class="mb-0"><a href="/forgot-password" class="text-primary ms-1">Esqueceu sua senha?</a></p>
                     </div>
 
-                    <div class="container-login100-form-btn" @click="login">
+                    <div class="container-login100-form-btn" @click="login" v-on:keyup.enter="login">
                         <a class="login100-form-btn btn-primary">
                             Login
                         </a>
@@ -57,6 +57,7 @@ export default {
                 password: this.password
             }).then((result) => {
                 this.$toast.open(result.data.msg);
+                window.location.href = '/admin';
             }).catch((e) => {
                 this.$toast.error(e.response.data.msg);
                 this.error = e.response.data.errors;

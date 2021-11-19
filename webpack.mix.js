@@ -69,6 +69,5 @@ const mix = require('laravel-mix');
      processCssUrls: false
  });
 
- mix.browserSync('http://127.0.0.1:8000');
-
+ // mix.browserSync('http://127.0.0.1:8000');
 

@@ -3,15 +3,16 @@
         <div class="col-lg-12 col-md-12">
             <div class="card">
                 <div class="card-header">
-                    <h1 class="card-title">Editar receita</h1>
+                    <h1 class="card-title m-2">Editar receita </h1>
+                    <span class="text-warning"> (Ao atualizar o registro, todos lançamentos da fatura serão atualizados)</span>
                 </div>
 
                 <div class="card-body pb-2">
                     <div class="row row-sm">
                         <div class="card-pay">
-                            <ul class="tabs-menu nav justify-content-center">
-                                <li @click="changeType(1)"><a href="#tab20" :class="parseInt(formData.type) === 1 ? 'active' : ''" data-bs-toggle="tab"><i class="fa fa-calendar-check-o"></i> Receita Fixa</a></li>
-                                <li @click="changeType(2)"><a href="#tab21" :class="parseInt(formData.type) === 2 ? 'active' : ''" data-bs-toggle="tab"><i class="fa fa-credit-card"></i>  Receita Variável</a></li>
+                            <ul class="tabs-menu nav justify-content-center opacity-60">
+                                <li><a :class="parseInt(formData.type) === 1 ? 'active' : ''"><i class="fa fa-calendar-check-o"></i> Receita Fixa</a></li>
+                                <li><a :class="parseInt(formData.type) === 2 ? 'active' : ''"><i class="fa fa-credit-card"></i>  Receita Variável</a></li>
                             </ul>
                         </div>
                     </div>
@@ -46,17 +47,18 @@
                                 <div class="input-group-text">
                                     <i class="fa fa-calendar tx-16 lh-0 op-6"></i>
                                 </div>
-                                <input id="dateRegistry" :class="'form-control fc-datepicker ' + errors.date" placeholder="dd/mm/aaaa" type="text">
+                                <input id="dateRegistry" v-if="parseInt(formData.type) === 1" :class="'form-control fc-datepicker ' + errors.date" placeholder="dd/mm/aaaa" type="text">
+                                <input id="dateRegistry" v-else :class="'form-control fc-datepicker ' + errors.date" placeholder="dd/mm/aaaa" type="text" disabled>
                             </div>
                         </div>
                     </div>
 
-                    <div class="row row-sm mb-3" id="repeatOptions">
+                    <div class="row row-sm mb-3 opacity-50" id="repeatOptions">
                         <div class="col-lg">
                             <div class="form-group">
                                 <div class="form-label">Possui repetição?</div>
                                 <label class="custom-switch">
-                                    <input type="checkbox" name="custom-switch-checkbox" class="custom-switch-input" v-model="formData.repeat" @change="changeRepeat()">
+                                    <input type="checkbox" name="custom-switch-checkbox" class="custom-switch-input" v-model="formData.repeat" @change="changeRepeat()" readonly disabled>
                                     <span class="custom-switch-indicator"></span>
                                     <span class="custom-switch-description"> Marque caso tenha mais de um lançamento</span>
                                 </label>
@@ -65,13 +67,13 @@
 
                         <div class="col-lg repeatDiv">
                             <label class="form-label">Quantidade de repetições</label>
-                            <input type="number" :class="'form-control ' + errors.repeat_times" min="1" v-model="formData.repeat_times">
+                            <input type="number" :class="'form-control ' + errors.repeat_times" min="1" v-model="formData.repeat_times" readonly disabled>
                         </div>
 
                         <div class="col-lg repeatDiv">
                             <div class="form-group">
                                 <label class="form-label">Frequência da repetição</label>
-                                <select class="form-control form-select select2" data-bs-placeholder="Selecione um" v-model="formData.repeat_type">
+                                <select class="form-control form-select select2" data-bs-placeholder="Selecione um" v-model="formData.repeat_type" readonly disabled>
                                     <option label="Selecione" disabled></option>
                                     <option value="1">Semanalmente</option>
                                     <option value="2">Mensalmente</option>
@@ -84,7 +86,6 @@
                     <div class="row mb-3">
                         <div class="btn-list">
                             <a href="#" class="btn btn-danger" @click="back()">Voltar</a>
-                            <a href="#" class="btn btn-primary" @click="saveAndInsert()">Concluir e inserir outro</a>
                             <a href="#" class="btn btn-success" @click="save()">Concluir</a>
                         </div>
                     </div>
@@ -97,18 +98,14 @@
 <script>
 export default {
     name: "create",
+    props: {
+        data: {
+            default: () => []
+        }
+    },
     data() {
         return {
-            formData: {
-                name: '',
-                type: 1,
-                date: '',
-                value: 0,
-                repeat: 0,
-                repeat_times: 1,
-                repeat_type: 2,
-                status: 2,
-            },
+            formData: JSON.parse(this.data),
             selectors: {
                 typeDiv: '#repeatOptions',
                 repeatDiv: '.repeatDiv',
@@ -125,10 +122,15 @@ export default {
         }
     },
     mounted() {
-        this.changeType();
+        this.setValue();
+        this.changeType(this.formData.type);
         this.changeRepeat();
     },
     methods: {
+        setValue() {
+            $(this.selectors.moneyInput).val(this.formData.value);
+            $(this.selectors.dateInput).val(this.formData.date);
+        },
         changeType(option = null) {
             if (option === 2) {
                 this.formData.type = 2;
@@ -150,32 +152,13 @@ export default {
             this.formData.date = $(this.selectors.dateInput).val();
             this.formData.repeat = this.formData.repeat ? 1 : 0;
         },
-        saveAndInsert() {
-            this.save(false);
-
-            $(this.selectors.moneyInput).val('');
-            $(this.selectors.dateInput).val('');
-            this.formData = {
-                name: '',
-                type: 1,
-                date: '',
-                value: 0,
-                repeat: 0,
-                repeat_times: 1,
-                repeat_type: 2,
-                status: 2,
-            };
-        },
-        save(redirect = true) {
+        save() {
             this.resetErrorFields();
             this.setValueField();
 
-            this.axios.post('/admin/profits/create', this.formData).then((result) => {
+            this.axios.post('/admin/profits/update', this.formData).then((result) => {
                 this.$toast.open(result.data.msg);
-
-                if (redirect) {
-                    window.location.href = '/admin/profits';
-                }
+                window.location.href = '/admin/profits';
             }).catch((error) => {
                 this.getErrors(error.response.data);
             });
@@ -205,5 +188,20 @@ export default {
 </script>
 
 <style scoped>
-
+.opacity-50 {
+    opacity: 0.5;
+}
+.opacity-60 {
+    opacity: 0.6;
+}
+.opacity-75 {
+    opacity: 0.75;
+}
+.card-pay .tabs-menu li a.active {
+    background: #de223d !important;
+    color: #fff;
+}
+.card-pay .tabs-menu li a {
+    color: black
+}
 </style>
