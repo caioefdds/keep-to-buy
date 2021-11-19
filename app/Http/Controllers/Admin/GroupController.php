@@ -31,7 +31,7 @@ class GroupController extends Controller
     public function getAll()
     {
         return Group::where([
-            ["user_id", Auth::user()->id]
+            ["user_id", Auth::id()]
         ])->get();
     }
 
@@ -53,7 +53,7 @@ class GroupController extends Controller
             'required' => "O campo :attribute é obrigatório"
         ]);
 
-        $validated['user_id'] = Auth::user()->id;
+        $validated['user_id'] = Auth::id();
 
         $insert = Group::create($validated);
 
@@ -82,7 +82,7 @@ class GroupController extends Controller
             'required' => "O campo :attribute é obrigatório"
         ]);
 
-        $validated['user_id'] = Auth::user()->id;
+        $validated['user_id'] = Auth::id();
 
         $insert = Group::where([
             ['id', $validated['id']]
@@ -116,7 +116,7 @@ class GroupController extends Controller
 
         $data = Group::where([
             ["id", $id],
-            ["user_id", Auth::user()->id],
+            ["user_id", Auth::id()],
         ])->first();
 
         if (empty($data)) {
@@ -141,7 +141,7 @@ class GroupController extends Controller
 
         $data = Group::where([
             ["id", $validated['id']],
-            ["user_id", Auth::user()->id],
+            ["user_id", Auth::id()],
         ])->delete();
 
         if (empty($data)) {

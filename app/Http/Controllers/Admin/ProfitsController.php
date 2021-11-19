@@ -34,7 +34,7 @@ class ProfitsController extends Controller
     }
 
     /**
-     * Retorna a página principal do Profits
+     * Render da view [profits.index]
      * @return Application|Factory|View
      */
     public function index()
@@ -43,6 +43,49 @@ class ProfitsController extends Controller
         return view('pages.profits.index', compact('dataTable'));
     }
 
+    /**
+     * Render da view [profits.create]
+     * @return Application|Factory|View
+     */
+    public function createPage()
+    {
+        $categories = $this->__categoryController->getAll();
+        $groups = $this->__groupController->getAll();
+
+        return view('pages.profits.create', compact('categories', 'groups'));
+    }
+
+
+    /**
+     * Render da view [profits.edit]
+     * @param $id
+     * @return Application|Factory|View
+     */
+    public function edit($id)
+    {
+        if (empty($id)) {
+            return view('livewire.error500');
+        }
+        $result = $this->get($id);
+
+        if (empty($result)) {
+            return view('livewire.error500');
+        }
+
+        $result['value'] = MoneyUtils::floatToString($result['value']);
+        $result['date'] = DateUtils::dateToString($result['date']);
+
+        $categories = $this->__categoryController->getAll();
+        $groups = $this->__groupController->getAll();
+
+        return view('pages.profits.edit', compact('result', 'categories', 'groups'));
+    }
+
+    /**
+     * Consulta [Profit] por [id]
+     * @param $id
+     * @return mixed
+     */
     public function get($id)
     {
         return Profit::where([
@@ -55,6 +98,10 @@ class ProfitsController extends Controller
         ->first();
     }
 
+    /**
+     * Consulta a todos os registros [Profit]
+     * @return mixed
+     */
     public function getAll()
     {
         return Profit::where([
@@ -67,8 +114,9 @@ class ProfitsController extends Controller
     }
 
     /**
-     * Retorna todos registros referentes ao usuário
-     * @return mixed
+     * Formata info contida em um array
+     * @param $data
+     * @return array
      */
     public function treatInfo($data): array
     {
@@ -89,7 +137,7 @@ class ProfitsController extends Controller
     }
 
     /**
-     * Função para criar um novo registro na profits
+     * Insere registros do [Profits] e [ProfitRecords]
      * @param ProfitsRequest $request
      * @return JsonResponse
      */
@@ -97,7 +145,7 @@ class ProfitsController extends Controller
     {
         $data = $request->all();
 
-        $data['user_id'] = Auth::user()->id;
+        $data['user_id'] = Auth::id();
         $data['value'] = MoneyUtils::stringToFloat($data['value']);
         $data['date'] = DateUtils::stringToDate($data['date']);
 
@@ -122,86 +170,40 @@ class ProfitsController extends Controller
     }
 
     /**
-     * Função para atualizar um registro na profits
-     * @param Request $request
+     * Atualiza registros do [Profits] e [ProfitRecords]
+     * @param ProfitsRequest $request
      * @return JsonResponse
      */
-    public function update(Request $request): JsonResponse
+    public function update(ProfitsRequest $request): JsonResponse
     {
-        if (empty($request)) {
-            return Response::error([], 'Dados incorretos.', [], 400);
-        }
+        $data = $request->all();
 
-        $validated = $request->validate([
-            'id' => 'required',
-            'name' => 'required',
-            'category_id' => '',
-            'status' => 'required',
-            'date' => 'required',
-            'type' => 'required',
-            'repeat' => '',
-            'repeat_times' => '',
-            'repeat_type' => '',
-        ], [
-            'required' => "O campo :attribute é obrigatório"
-        ]);
+        $data['user_id'] = Auth::id();
+        $data['value'] = MoneyUtils::stringToFloat($data['value']);
+        $data['date'] = DateUtils::stringToDate($data['date']);
 
-        if (!(DateUtils::validateDate($validated['date'], 'Y-m-d'))) {
+        if (!(DateUtils::validateDate($data['date'], 'Y-m-d'))) {
             return Response::error([], "Data inválida.", [
-                "date" => "Insira corretamente a data."
+                "date" => ["Insira corretamente a data."]
             ]);
         }
-        $validated['user_id'] = Auth::user()->id;
 
-        $insert = Profit::where([
-            ['id', $validated['id']]
-        ])->update($validated);
-
-        if ($insert) {
-            return Response::success($insert, "Registro atualizado com sucesso!");
+        if ($data['repeat'] == ProfitConstants::REPEAT_MANY_TIMES && $data['repeat_times'] < 1) {
+            return Response::error([], "Operação inválida.", [
+                "repeat_times" => ["O valor mínimo é 1."]
+            ]);
         }
-        return Response::error([], "Erro ao atualizar registro");
+
+        $update = $this->__profitService->updateProfit($data);
+
+        if ($update) {
+            return Response::success([], "Registro atualizado com sucesso!");
+        }
+        return Response::error([], "Erro ao atualizar o registro");
     }
 
     /**
-     * Função para retornar a página de criação da profits
-     * @return Application|Factory|View
-     */
-    public function createPage()
-    {
-        $categories = $this->__categoryController->getAll();
-        $groups = $this->__groupController->getAll();
-
-        return view('pages.profits.create', compact('categories', 'groups'));
-    }
-
-    /**
-     * Função para retornar a página de edição da profits
-     * @param $id
-     * @return Application|Factory|View|JsonResponse
-     */
-    public function edit($id)
-    {
-        if (empty($id)) {
-            return view('livewire.error500');
-        }
-        $result = $this->get($id);
-
-        if (empty($result)) {
-            return view('livewire.error500');
-        }
-
-        $result['value'] = MoneyUtils::floatToString($result['value']);
-        $result['date'] = DateUtils::dateToString($result['date']);
-
-        $categories = $this->__categoryController->getAll();
-        $groups = $this->__groupController->getAll();
-
-        return view('pages.profits.edit', compact('result', 'categories', 'groups'));
-    }
-
-    /**
-     * Função para excluir um registro da profits
+     * Remove registros da [Profits] e [ProfitRecords]
      * @param Request $request
      * @return JsonResponse
      */

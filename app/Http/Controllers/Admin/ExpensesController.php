@@ -40,7 +40,7 @@ class ExpensesController extends Controller
     public function getAll()
     {
         return Expense::where([
-            ["expenses.user_id", Auth::user()->id]
+            ["expenses.user_id", Auth::id()]
         ])
             ->leftJoin('categories', 'categories.id', 'expenses.category_id')
             ->leftJoin('groups', 'groups.id', 'expenses.group_id')
@@ -77,7 +77,7 @@ class ExpensesController extends Controller
                 "date" => "Insira corretamente a data."
             ]);
         }
-        $validated['user_id'] = Auth::user()->id;
+        $validated['user_id'] = Auth::id();
 
         $insert = Expense::create($validated);
 
@@ -117,7 +117,7 @@ class ExpensesController extends Controller
                 "date" => "Insira corretamente a data."
             ]);
         }
-        $validated['user_id'] = Auth::user()->id;
+        $validated['user_id'] = Auth::id();
 
         $insert = Expense::where([
             ['id', $validated['id']]
@@ -154,7 +154,7 @@ class ExpensesController extends Controller
 
         $data = Expense::where([
             ["id", $id],
-            ["user_id", Auth::user()->id],
+            ["user_id", Auth::id()],
         ])->first();
         $data['date'] = DateUtils::formatDate($data['date']);
 
@@ -183,7 +183,7 @@ class ExpensesController extends Controller
 
         $data = Expense::where([
             ["id", $validated['id']],
-            ["user_id", Auth::user()->id],
+            ["user_id", Auth::id()],
         ])->delete();
 
         if (empty($data)) {
