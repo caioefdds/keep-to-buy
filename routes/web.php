@@ -163,7 +163,7 @@ Route::middleware('auth')->prefix('admin')->group(function () {
         Route::get('/getAll', [ExpensesController::class, 'getAll']);
         Route::get('/create', [ExpensesController::class, 'createPage']);
         Route::post('/create', [ExpensesController::class, 'create']);
-        Route::get('/edit/:id', [ExpensesController::class, 'edit']);
+        Route::get('/edit/{id}', [ExpensesController::class, 'edit']);
         Route::post('/update', [ExpensesController::class, 'update']);
         Route::post('/delete', [ExpensesController::class, 'delete']);
     });

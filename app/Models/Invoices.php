@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class InvoiceItem extends Model
+class Invoices extends Model
 {
     use HasFactory;
     use SoftDeletes;
@@ -14,13 +14,9 @@ class InvoiceItem extends Model
     protected $fillable = [
         'id',
         'user_id',
-        'invoice_id',
-        'expense_id',
-        'name',
-        'description',
-        'value',
-        'date',
-        'status',
+        'account_id',
+        'month',
+        'year',
     ];
 
     protected $hidden = [

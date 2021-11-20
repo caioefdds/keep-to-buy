@@ -2,78 +2,78 @@
 
 namespace App\Http\Services;
 
-use App\Models\Profit;
-use App\Http\Constants\ProfitConstants;
+use App\Models\Expense;
+use App\Http\Constants\ExpenseConstants;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Throwable;
 
-class ExpensesServices extends ProfitRecordsServices
+class ExpensesServices extends InvoiceServices
 {
     /**
-     * Main function call to create [Profit]
+     * Main function call to create [Expense]
      * @param $data
      * @return bool
      */
-    public function createProfit($data): bool
+    public function createExpense($data): bool
     {
-        if ($data['type'] == ProfitConstants::TYPE_FIXED) {
-            return $this->__createFixedProfit($data);
-        } elseif ($data['type'] == ProfitConstants::TYPE_VARIABLE) {
-            return $this->__createVariableProfit($data);
+        if ($data['type'] == ExpenseConstants::TYPE_FIXED) {
+            return $this->__createFixedExpense($data);
+        } elseif ($data['type'] == ExpenseConstants::TYPE_VARIABLE) {
+            return $this->__createVariableExpense($data);
         }
 
         return false;
     }
 
     /**
-     * Main function call to update [Profit]
+     * Main function call to update [Expense]
      * @param $data
      * @return bool
      */
-    public function updateProfit($data): bool
+    public function updateExpense($data): bool
     {
-        if ($data['type'] == ProfitConstants::TYPE_FIXED) {
-            return $this->__updateFixedProfit($data);
-        } elseif ($data['type'] == ProfitConstants::TYPE_VARIABLE) {
-            return $this->__updateVariableProfit($data);
+        if ($data['type'] == ExpenseConstants::TYPE_FIXED) {
+            return $this->__updateFixedExpense($data);
+        } elseif ($data['type'] == ExpenseConstants::TYPE_VARIABLE) {
+            return $this->__updateVariableExpense($data);
         }
 
         return false;
     }
 
     /**
-     * Main function call to delete [Profit]
+     * Main function call to delete [Expense]
      * @param $id
      * @return bool
      */
-    public function deleteProfit($id): bool
+    public function deleteExpense($id): bool
     {
-        $profit = Profit::where([
+        $expense = Expense::where([
             ["id", $id],
             ["user_id", Auth::id()],
         ])->first();
 
-        if ($profit['type'] == ProfitConstants::TYPE_FIXED) {
-            return $this->__deleteFixedProfit($id);
-        } elseif ($profit['type'] == ProfitConstants::TYPE_VARIABLE) {
-            return $this->__deleteVariableProfit($id);
+        if ($expense['type'] == ExpenseConstants::TYPE_FIXED) {
+            return $this->__deleteFixedExpense($id);
+        } elseif ($expense['type'] == ExpenseConstants::TYPE_VARIABLE) {
+            return $this->__deleteVariableExpense($id);
         }
 
         return false;
     }
 
     /**
-     * Create Fixed [Profit]
+     * Create Fixed [Expense]
      * @param $data
      * @return bool
      */
-    private function __createFixedProfit($data): bool
+    private function __createFixedExpense($data): bool
     {
         DB::beginTransaction();
-        $profitInsert = Profit::create($data);
+        $expenseInsert = Expense::create($data);
 
-        if (!$profitInsert) {
+        if (!$expenseInsert) {
             DB::rollBack();
             return false;
         }
@@ -83,24 +83,24 @@ class ExpensesServices extends ProfitRecordsServices
     }
 
     /**
-     * Create Variable [Profit]
+     * Create Variable [Expense]
      * @param $data
      * @return bool
      * @throws Throwable
      */
-    private function __createVariableProfit($data): bool
+    private function __createVariableExpense($data): bool
     {
         DB::beginTransaction();
-        $profitInsert = Profit::create($data);
+        $expenseInsert = Expense::create($data);
 
-        if (!$profitInsert) {
+        if (!$expenseInsert) {
             DB::rollBack();
             return false;
         }
 
-        $createProfitRecords = $this->createProfitRecords($profitInsert);
+        $createInvoices = $this->createInvoices($expenseInsert);
 
-        if (!$createProfitRecords) {
+        if (!$createInvoices) {
             DB::rollBack();
             return false;
         }
@@ -110,14 +110,14 @@ class ExpensesServices extends ProfitRecordsServices
     }
 
     /**
-     * Update Fixed [Profit]
+     * Update Fixed [Expense]
      * @param $data
      * @return bool
      */
-    private function __updateFixedProfit($data): bool
+    private function __updateFixedExpense($data): bool
     {
         DB::beginTransaction();
-        $profitUpdate = Profit::where([
+        $expenseUpdate = Expense::where([
             ['id', $data['id']]
         ])->update([
             'name' => $data['name'],
@@ -126,7 +126,7 @@ class ExpensesServices extends ProfitRecordsServices
             'date' => $data['date'],
         ]);
 
-        if (!$profitUpdate) {
+        if (!$expenseUpdate) {
             DB::rollBack();
             return false;
         }
@@ -136,14 +136,14 @@ class ExpensesServices extends ProfitRecordsServices
     }
 
     /**
-     * Update Variable [Profit]
+     * Update Variable [Expense]
      * @param $data
      * @return bool
      */
-    private function __updateVariableProfit($data): bool
+    private function __updateVariableExpense($data): bool
     {
         DB::beginTransaction();
-        $profitUpdate = Profit::where([
+        $expenseUpdate = Expense::where([
             ['id', $data['id']]
         ])->update([
             'name' => $data['name'],
@@ -151,14 +151,14 @@ class ExpensesServices extends ProfitRecordsServices
             'status' => $data['status']
         ]);
 
-        if (!$profitUpdate) {
+        if (!$expenseUpdate) {
             DB::rollBack();
             return false;
         }
 
-        $updateProfitRecords = $this->updateProfitRecords($data);
+        $updateInvoices = $this->updateInvoices($data);
 
-        if (!$updateProfitRecords) {
+        if (!$updateInvoices) {
             DB::rollBack();
             return false;
         }
@@ -168,13 +168,13 @@ class ExpensesServices extends ProfitRecordsServices
     }
 
     /**
-     * Delete [Profit] by [id]
+     * Delete [Expense] by [id]
      * @param $id
      * @return bool
      */
-    private function __deleteProfitById($id): bool
+    private function __deleteExpenseById($id): bool
     {
-        $data = Profit::where([
+        $data = Expense::where([
             ["id", $id],
             ["user_id", Auth::id()],
         ])->delete();
@@ -187,16 +187,16 @@ class ExpensesServices extends ProfitRecordsServices
     }
 
     /**
-     * Delete Fixed [Profit]
+     * Delete Fixed [Expense]
      * @param $id
      * @return bool
      */
-    private function __deleteFixedProfit($id): bool
+    private function __deleteFixedExpense($id): bool
     {
         DB::beginTransaction();
-        $profitDelete = $this->__deleteProfitById($id);
+        $expenseDelete = $this->__deleteExpenseById($id);
 
-        if (!$profitDelete) {
+        if (!$expenseDelete) {
             DB::rollBack();
             return false;
         }
@@ -206,22 +206,22 @@ class ExpensesServices extends ProfitRecordsServices
     }
 
     /**
-     * Delete Variable [Profit]
+     * Delete Variable [Expense]
      * @param $id
      * @return bool
      */
-    private function __deleteVariableProfit($id): bool
+    private function __deleteVariableExpense($id): bool
     {
         DB::beginTransaction();
-        $profitDelete = $this->__deleteProfitById($id);
+        $expenseDelete = $this->__deleteExpenseById($id);
 
-        if (!$profitDelete) {
+        if (!$expenseDelete) {
             DB::rollBack();
             return false;
         }
-        $deleteProfitRecords = $this->deleteProfitRecords($id);
+        $deleteInvoices = $this->deleteInvoices($id);
 
-        if (!$deleteProfitRecords) {
+        if (!$deleteInvoices) {
             DB::rollBack();
             return false;
         }

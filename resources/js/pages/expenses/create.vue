@@ -42,7 +42,7 @@
                                 <label class="form-label">Qual status?</label>
                                 <select :class="'form-control form-select select2 ' + errors.status" data-bs-placeholder="Selecione um" v-model="formData.status">
                                     <option label="--- Selecione ---" disabled></option>
-                                    <option value="1">Recebido</option>
+                                    <option value="1">Pago</option>
                                     <option value="2">Pendente</option>
                                 </select>
                             </div>

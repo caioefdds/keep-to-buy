@@ -30,5 +30,4 @@
 @endsection('content')
 
 @section('scripts')
-    <script src="{{ mix('assets/js/pages/register/index.js')}}"></script>
 @endsection

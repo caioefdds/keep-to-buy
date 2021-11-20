@@ -3,7 +3,7 @@
         <div class="col-lg-12 col-md-12">
             <div class="card">
                 <div class="card-header">
-                    <h1 class="card-title m-2">Editar receita </h1>
+                    <h1 class="card-title m-2">Editar despesa </h1>
                     <span class="text-warning"> (Ao atualizar o registro, todos lançamentos da fatura serão atualizados)</span>
                 </div>
 
@@ -11,8 +11,8 @@
                     <div class="row row-sm">
                         <div class="card-pay">
                             <ul class="tabs-menu nav justify-content-center opacity-60">
-                                <li><a :class="parseInt(formData.type) === 1 ? 'active' : ''"><i class="fa fa-calendar-check-o"></i> Receita Fixa</a></li>
-                                <li><a :class="parseInt(formData.type) === 2 ? 'active' : ''"><i class="fa fa-credit-card"></i>  Receita Variável</a></li>
+                                <li><a :class="parseInt(formData.type) === 1 ? 'active' : ''"><i class="fa fa-calendar-check-o"></i> Despesa Fixa</a></li>
+                                <li><a :class="parseInt(formData.type) === 2 ? 'active' : ''"><i class="fa fa-credit-card"></i>  Despesa Variável</a></li>
                             </ul>
                         </div>
                     </div>
@@ -35,7 +35,7 @@
                                 <label class="form-label">Qual status?</label>
                                 <select :class="'form-control form-select select2 ' + errors.status" data-bs-placeholder="Selecione um" v-model="formData.status">
                                     <option label="--- Selecione ---" disabled></option>
-                                    <option value="1">Recebido</option>
+                                    <option value="1">Pago</option>
                                     <option value="2">Pendente</option>
                                 </select>
                             </div>
@@ -156,15 +156,15 @@ export default {
             this.resetErrorFields();
             this.setValueField();
 
-            this.axios.post('/admin/profits/update', this.formData).then((result) => {
+            this.axios.post('/admin/expenses/update', this.formData).then((result) => {
                 this.$toast.open(result.data.msg);
-                window.location.href = '/admin/profits';
+                window.location.href = '/admin/expenses';
             }).catch((error) => {
                 this.getErrors(error.response.data);
             });
         },
         back() {
-            window.location.href = '/admin/profits';
+            window.location.href = '/admin/expenses';
         },
         getErrors(error) {
             if (error.errors !== null && error.errors !== undefined) {
