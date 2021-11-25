@@ -13,6 +13,11 @@ use Throwable;
 
 class InvoiceServices
 {
+
+    public function getInvoicesAndRecords()
+    {
+        
+    }
     /**
      * Main function call to create [Invoices]
      * @param $expenseData

@@ -12,7 +12,7 @@
 					<ul class="side-menu">
 						<li><h3>Main</h3></li>
 						<li class="slide">
-							<a class="side-menu__item"  data-bs-toggle="slide" href="{{ url('index') }}"><i class="side-menu__icon fe fe-home"></i><span class="side-menu__label">Dashboard</span></a>
+							<a class="side-menu__item"  data-bs-toggle="slide" href="{{ url('/admin') }}"><i class="side-menu__icon fe fe-home"></i><span class="side-menu__label">Início</span></a>
 						</li>
 
                         <li><h3>Recursos</h3></li>

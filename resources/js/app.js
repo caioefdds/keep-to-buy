@@ -14,6 +14,8 @@ Vue.use(Loading);
 Vue.component('p-register', require('./pages/RegisterPage').default);
 Vue.component('p-login', require('./pages/LoginPage').default);
 
+Vue.component('p-invoice', require('./pages/InvoicePage').default);
+
 Vue.component('p-profits-index', require('./pages/profits/index').default);
 Vue.component('p-expenses-index', require('./pages/expenses/index').default);
 Vue.component('p-groups-index', require('./pages/groups/index').default);

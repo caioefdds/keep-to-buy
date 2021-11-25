@@ -142,7 +142,7 @@ Route::get('/', function () {
 
 Route::middleware('auth')->prefix('admin')->group(function () {
     Route::get('/', function () {
-        return view('livewire.index');
+        return view('pages.index');
     });
     Route::get('index', Index::class);
 
@@ -190,10 +190,6 @@ Route::middleware('auth')->prefix('admin')->group(function () {
         Route::post('/delete', [GroupController::class, 'delete']);
     });
 });
-Route::get('/', function () {
-    return view('livewire.index');
-});
-Route::get('index', Index::class);
 Route::get('about', About::class);
 Route::get('accordion', Accordion::class);
 Route::get('alerts', Alerts::class);
