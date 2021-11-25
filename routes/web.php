@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\InvoicesController;
 use App\Http\Livewire\About;
 use App\Http\Livewire\Accordion;
 use App\Http\Livewire\Alerts;
@@ -141,10 +142,8 @@ Route::get('/', function () {
 });
 
 Route::middleware('auth')->prefix('admin')->group(function () {
-    Route::get('/', function () {
-        return view('pages.index');
-    });
-    Route::get('index', Index::class);
+    Route::get('/', [InvoicesController::class, 'index']);
+    Route::get('index', [InvoicesController::class, 'index']);
 
     Route::prefix('profits')->group(function () {
         Route::get('/', [ProfitsController::class, 'index']);

@@ -7,6 +7,7 @@ use App\Models\Profit;
 use App\Http\Constants\ProfitConstants;
 use App\Models\ProfitRecordItems;
 use App\Models\ProfitRecords;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Throwable;
@@ -95,6 +96,42 @@ class ProfitRecordsServices
             ['year', $year],
             ['month', $month]
         ])->first();
+    }
+
+    public static function getProfitRecordFixedByDate($dateStart)
+    {
+        return User::where([
+            ['users.id', Auth::id()],
+            ['p.type', 1],
+            ['p.date', '<=', $dateStart],
+            ['p.deleted_at', null],
+        ])
+            ->leftJoin('profits as p', 'users.id', '=', 'p.user_id')
+            ->leftJoin('profit_record_items as pr_i', 'p.id', '=', 'pr_i.profit_id')
+            ->select(
+                'p.name as name', 'p.date', 'pr_i.id as profit_record_item_id', 'p.value', 'p.type', 'p.repeat',
+                DB::raw("(
+                    CASE WHEN pr_i.status = 1 THEN 1 ELSE 2
+                END) as profit_record_item_status")
+            )
+            ->get();
+    }
+
+    public static function getProfitRecordVariableByDate($dateStart, $dateEnd)
+    {
+        return User::where([
+            ['users.id', Auth::id()],
+            ['p.type', 2],
+        ])
+            ->leftJoin('profit_records as pr', 'pr.user_id', '=', 'users.id')
+            ->leftJoin('profit_record_items as pr_i', 'pr.id', '=', 'pr_i.profit_record_id')
+            ->leftJoin('profits as p', 'pr_i.profit_id', '=', 'p.id')
+            ->whereBetween('pr_i.date', [$dateStart, $dateEnd])
+            ->select(
+                'p.name as name', 'pr_i.status as profit_record_item_status', 'pr_i.id as profit_record_item_id',
+                'p.type', 'pr_i.value', 'p.repeat', 'pr_i.date'
+            )
+            ->get();
     }
 
     /**

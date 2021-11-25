@@ -41,6 +41,22 @@ class DateUtils
         return false;
     }
 
+    public static function getDayFromDate($date)
+    {
+        if (!empty($date)) {
+            $formattedDate = self::formatDate($date);
+            $array = explode("-", $formattedDate);
+
+            if (count($array) == 3) {
+                return $array[0];
+            }
+
+            return false;
+        }
+
+        return false;
+    }
+
     public static function validateDate($date, $format = 'Y-m-d H:i:s'): bool
     {
         $d = DateTime::createFromFormat($format, $date);

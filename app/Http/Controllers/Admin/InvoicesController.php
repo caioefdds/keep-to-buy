@@ -4,29 +4,21 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Services\InvoiceServices;
-use App\Http\Services\ProfitsServices;
-use Illuminate\Contracts\Foundation\Application;
-use Illuminate\Contracts\View\Factory;
-use Illuminate\Contracts\View\View;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class InvoicesController extends Controller
 {
-    /**
-     * Retorna a página principal do Categories
-     * @return Application|Factory|View
-     */
+    private $invoiceService;
 
-    private $__invoiceService;
-
-    public function __construct(
-        InvoiceServices $invoiceService
-    ) {
-        $this->__invoiceService = $invoiceService;
+    public function __construct(InvoiceServices $invoiceService)
+    {
+        $this->invoiceService = $invoiceService;
     }
+
     public function index()
     {
-
-        return view('admin.categories.index');
+        dd($this->invoiceService->getInvoicesAndRecords(12, 2021));
+        return view('admin.dashboard');
     }
-
 }
