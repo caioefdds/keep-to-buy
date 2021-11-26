@@ -83,10 +83,8 @@ export default {
             this.deleteId = null;
         },
         deleteRegistry() {
-            this.axios.delete('/admin/expenses/delete', {
-                data: {
-                    id: this.deleteId
-                }
+            this.axios.post('/admin/expenses/delete', {
+                id: this.deleteId
             }).then((response) => {
                 this.$toast.open(response.data.msg);
                 window.location.reload();

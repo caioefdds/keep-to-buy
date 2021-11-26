@@ -2,7 +2,9 @@
 
 namespace App\Http\Services;
 
+use App\Http\Constants\InvoiceConstants;
 use App\Http\Utils\DateUtils;
+use App\Http\Utils\MoneyUtils;
 use App\Models\Expense;
 use App\Http\Constants\ExpenseConstants;
 use App\Models\InvoiceItems;
@@ -37,43 +39,51 @@ class InvoiceServices
         $dataExpenseVariable = [];
 
         foreach ($profitFixed as $key => $value) {
+            $dataProfitFixed[$key]['record_type'] = InvoiceConstants::RECORD_TYPE_PROFIT;
             $dataProfitFixed[$key]['name'] = $value['name'];
-            $dataProfitFixed[$key]['date'] = $value['date'];
+            $dataProfitFixed[$key]['status'] = $value['profit_record_item_status'];
+            $dataProfitFixed[$key]['date'] = DateUtils::dateToString($value['date']);
             $dataProfitFixed[$key]['value'] = $value['value'];
             $dataProfitFixed[$key]['type'] = $value['type'];
             $dataProfitFixed[$key]['repeat'] = $value['repeat'];
+            $dataProfitFixed[$key]['profit_id'] = $value['profit_id'];
             $dataProfitFixed[$key]['profit_record_item_id'] = $value['profit_record_item_id'];
-            $dataProfitFixed[$key]['profit_record_item_status'] = $value['profit_record_item_status'];
         }
 
         foreach ($profitVariable as $key => $value) {
+            $dataProfitVariable[$key]['record_type'] = InvoiceConstants::RECORD_TYPE_PROFIT;
             $dataProfitVariable[$key]['name'] = $value['name'];
-            $dataProfitVariable[$key]['date'] = $value['date'];
+            $dataProfitVariable[$key]['status'] = $value['profit_record_item_status'];
+            $dataProfitVariable[$key]['date'] = DateUtils::dateToString($value['date']);
             $dataProfitVariable[$key]['value'] = $value['value'];
             $dataProfitVariable[$key]['type'] = $value['type'];
             $dataProfitVariable[$key]['repeat'] = $value['repeat'];
+            $dataProfitVariable[$key]['profit_id'] = $value['profit_id'];
             $dataProfitVariable[$key]['profit_record_item_id'] = $value['profit_record_item_id'];
-            $dataProfitVariable[$key]['profit_record_item_status'] = $value['profit_record_item_status'];
         }
 
         foreach ($expenseFixed as $key => $value) {
+            $dataExpenseFixed[$key]['record_type'] = InvoiceConstants::RECORD_TYPE_EXPENSE;
             $dataExpenseFixed[$key]['name'] = $value['name'];
-            $dataExpenseFixed[$key]['date'] = $value['date'];
+            $dataExpenseFixed[$key]['status'] = $value['invoice_item_status'];
+            $dataExpenseFixed[$key]['date'] = DateUtils::dateToString($value['date']);
             $dataExpenseFixed[$key]['value'] = $value['value'];
             $dataExpenseFixed[$key]['type'] = $value['type'];
             $dataExpenseFixed[$key]['repeat'] = $value['repeat'];
+            $dataExpenseFixed[$key]['expense_id'] = $value['expense_id'];;
             $dataExpenseFixed[$key]['invoice_item_id'] = $value['invoice_item_id'];
-            $dataExpenseFixed[$key]['invoice_item_status'] = $value['invoice_item_status'];
         }
 
         foreach ($expenseVariable as $key => $value) {
+            $dataExpenseVariable[$key]['record_type'] = InvoiceConstants::RECORD_TYPE_EXPENSE;
             $dataExpenseVariable[$key]['name'] = $value['name'];
-            $dataExpenseVariable[$key]['date'] = $value['date'];
+            $dataExpenseVariable[$key]['status'] = $value['invoice_item_status'];
+            $dataExpenseVariable[$key]['date'] = DateUtils::dateToString($value['date']);
             $dataExpenseVariable[$key]['value'] = $value['value'];
             $dataExpenseVariable[$key]['type'] = $value['type'];
             $dataExpenseVariable[$key]['repeat'] = $value['repeat'];
+            $dataExpenseVariable[$key]['expense_id'] = $value['expense_id'];
             $dataExpenseVariable[$key]['invoice_item_id'] = $value['invoice_item_id'];
-            $dataExpenseVariable[$key]['invoice_item_status'] = $value['invoice_item_status'];
         }
 
         $profitArray = array_merge($dataProfitFixed, $dataProfitVariable);
@@ -113,13 +123,13 @@ class InvoiceServices
         return User::where([
             ['users.id', Auth::id()],
             ['ex.type', 1],
-            ['ex.date', '<=', $dateStart],
+            ['ex.date', '>=', $dateStart],
             ['ex.deleted_at', null],
         ])
             ->leftJoin('expenses as ex', 'users.id', '=', 'ex.user_id')
             ->leftJoin('invoice_items as in_i', 'ex.id', '=', 'in_i.expense_id')
             ->select(
-                'ex.name as name', 'ex.date', 'in_i.id as invoice_item_id', 'ex.value', 'ex.type', 'ex.repeat',
+                'ex.name as name', 'ex.date', 'in_i.id as invoice_item_id', 'ex.value', 'ex.type', 'ex.repeat', 'ex.id as expense_id',
                 DB::raw("(
                     CASE WHEN in_i.status = 1 THEN 1 ELSE 2
                 END) as invoice_item_status")
@@ -132,13 +142,14 @@ class InvoiceServices
         return User::where([
             ['users.id', Auth::id()],
             ['ex.type', 2],
+            ['in_i.date', '>=', $dateStart],
+            ['in_i.date', '<=', $dateEnd],
         ])
             ->leftJoin('invoices as in', 'in.user_id', '=', 'users.id')
             ->leftJoin('invoice_items as in_i', 'in.id', '=', 'in_i.invoice_id')
             ->leftJoin('expenses as ex', 'in_i.expense_id', '=', 'ex.id')
-            ->whereBetween('in_i.date', [$dateStart, $dateEnd])
             ->select(
-                'ex.name as name', 'in_i.status as invoice_item_status', 'in_i.id as invoice_item_id',
+                'ex.name as name', 'in_i.status as invoice_item_status', 'in_i.id as invoice_item_id', 'ex.id as expense_id',
                 'ex.type', 'in_i.value', 'ex.repeat', 'in_i.date'
             )
             ->get();

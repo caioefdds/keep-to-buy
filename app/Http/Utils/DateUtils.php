@@ -41,14 +41,14 @@ class DateUtils
         return false;
     }
 
-    public static function getDayFromDate($date)
+    public static function getArrayFromDate($date)
     {
         if (!empty($date)) {
             $formattedDate = self::formatDate($date);
             $array = explode("-", $formattedDate);
 
             if (count($array) == 3) {
-                return $array[0];
+                return $array;
             }
 
             return false;

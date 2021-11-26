@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Services\InvoiceServices;
+use App\Http\Utils\DateUtils;
+use DateTime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -18,7 +20,15 @@ class InvoicesController extends Controller
 
     public function index()
     {
-        dd($this->invoiceService->getInvoicesAndRecords(12, 2021));
-        return view('admin.dashboard');
+        $dateTime = date('Y-m-d');
+        $date = DateUtils::getArrayFromDate($dateTime);
+        $dataTable = $this->getDataTableByDate($date[1], $date[0]);
+
+        return view('pages.index', compact('dataTable'));
+    }
+
+    public function getDataTableByDate($month, $year): array
+    {
+        return $this->invoiceService->getInvoicesAndRecords($month, $year);
     }
 }

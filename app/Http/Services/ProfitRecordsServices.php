@@ -103,13 +103,13 @@ class ProfitRecordsServices
         return User::where([
             ['users.id', Auth::id()],
             ['p.type', 1],
-            ['p.date', '<=', $dateStart],
+            ['p.date', '>=', $dateStart],
             ['p.deleted_at', null],
         ])
             ->leftJoin('profits as p', 'users.id', '=', 'p.user_id')
             ->leftJoin('profit_record_items as pr_i', 'p.id', '=', 'pr_i.profit_id')
             ->select(
-                'p.name as name', 'p.date', 'pr_i.id as profit_record_item_id', 'p.value', 'p.type', 'p.repeat',
+                'p.name as name', 'p.date', 'pr_i.id as profit_record_item_id', 'p.value', 'p.type', 'p.repeat', 'p.id as profit_id',
                 DB::raw("(
                     CASE WHEN pr_i.status = 1 THEN 1 ELSE 2
                 END) as profit_record_item_status")
@@ -122,13 +122,14 @@ class ProfitRecordsServices
         return User::where([
             ['users.id', Auth::id()],
             ['p.type', 2],
+            ['pr_i.date', '>=', $dateStart],
+            ['pr_i.date', '<=', $dateEnd],
         ])
             ->leftJoin('profit_records as pr', 'pr.user_id', '=', 'users.id')
             ->leftJoin('profit_record_items as pr_i', 'pr.id', '=', 'pr_i.profit_record_id')
             ->leftJoin('profits as p', 'pr_i.profit_id', '=', 'p.id')
-            ->whereBetween('pr_i.date', [$dateStart, $dateEnd])
             ->select(
-                'p.name as name', 'pr_i.status as profit_record_item_status', 'pr_i.id as profit_record_item_id',
+                'p.name as name', 'pr_i.status as profit_record_item_status', 'pr_i.id as profit_record_item_id', 'p.id as profit_id',
                 'p.type', 'pr_i.value', 'p.repeat', 'pr_i.date'
             )
             ->get();
