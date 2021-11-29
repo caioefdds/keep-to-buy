@@ -25,6 +25,55 @@ class DateUtils
         return false;
     }
 
+    /**
+     * @param $string
+     * @return false|string[] dia, mes e ano
+     */
+    public static function stringToArray($string)
+    {
+        if (!empty($string)) {
+            $array = explode("/", $string);
+
+            if (count($array) == 3) {
+                return [
+                    'day' => $array[0],
+                    'month' => $array[1],
+                    'year' => $array[2]
+                ];
+            }
+
+            return false;
+        }
+
+        return false;
+    }
+
+    /**
+     * @throws Exception
+     */
+    public static function getLastDayOfMonth($date)
+    {
+        $dateTime = new DateTime($date);
+        $dateTime->modify('last day of this month');
+        return $dateTime->format('d');
+    }
+
+    public static function dateToStringPrefixedDate($date, $month, $year)
+    {
+        if (!empty($date)) {
+            $formattedDate = self::formatDate($date);
+            $array = explode("-", $formattedDate);
+
+            if (count($array) == 3) {
+                return $array[2] . "/" . $month . "/" . $year;
+            }
+
+            return false;
+        }
+
+        return false;
+    }
+
     public static function dateToString($date)
     {
         if (!empty($date)) {
@@ -33,6 +82,26 @@ class DateUtils
 
             if (count($array) == 3) {
                 return $array[2] . "/" . $array[1] . "/" . $array[0];
+            }
+
+            return false;
+        }
+
+        return false;
+    }
+
+    public static function dateToArray($date)
+    {
+        if (!empty($date)) {
+            $formattedDate = self::formatDate($date);
+            $array = explode("-", $formattedDate);
+
+            if (count($array) == 3) {
+                return [
+                    'day' => $array[2],
+                    'month' => $array[1],
+                    'year' => $array[0]
+                ];
             }
 
             return false;

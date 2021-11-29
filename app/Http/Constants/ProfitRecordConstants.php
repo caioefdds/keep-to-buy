@@ -2,7 +2,7 @@
 
 namespace App\Http\Constants;
 
-class InvoiceConstants
+class ProfitRecordConstants
 {
     const RECORD_TYPE_PROFIT = 1;
     const RECORD_TYPE_EXPENSE = 2;

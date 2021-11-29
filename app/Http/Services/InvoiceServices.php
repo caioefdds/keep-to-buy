@@ -4,12 +4,10 @@ namespace App\Http\Services;
 
 use App\Http\Constants\InvoiceConstants;
 use App\Http\Utils\DateUtils;
-use App\Http\Utils\MoneyUtils;
-use App\Models\Expense;
 use App\Http\Constants\ExpenseConstants;
+use App\Http\Utils\MoneyUtils;
 use App\Models\InvoiceItems;
 use App\Models\Invoices;
-use App\Models\ProfitRecords;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -20,18 +18,21 @@ class InvoiceServices
 
     public function getInvoicesAndRecords($month, $year): array
     {
-        $dateStart = "$year-$month-01 00:00:00";
-        $dateEnd = "$year-$month-31 00:00:00";
+        if ($month < 10) {
+            $month = "0" . $month;
+        }
+        $dateStart = "$year-$month-01";
+        $dateEnd = "$year-$month-". DateUtils::getLastDayOfMonth($dateStart);
 
-        $profitFixed = ProfitRecordsServices::getProfitRecordFixedByDate($dateStart);
+        $profitFixed = ProfitRecordsServices::getProfitRecordFixedByDate($dateStart, $dateEnd);
         $profitVariable = ProfitRecordsServices::getProfitRecordVariableByDate($dateStart, $dateEnd);
-        $expenseFixed = self::getInvoiceFixedByDate($dateStart);
+        $expenseFixed = self::getInvoiceFixedByDate($dateStart, $dateEnd);
         $expenseVariable = self::getInvoiceVariableByDate($dateStart, $dateEnd);
 
-        return $this->__getCompleteList($profitFixed, $profitVariable, $expenseFixed, $expenseVariable);
+        return $this->__getCompleteList($profitFixed, $profitVariable, $expenseFixed, $expenseVariable, $month, $year);
     }
 
-    private function __getCompleteList($profitFixed, $profitVariable, $expenseFixed, $expenseVariable)
+    private function __getCompleteList($profitFixed, $profitVariable, $expenseFixed, $expenseVariable, $month, $year)
     {
         $dataProfitFixed = [];
         $dataExpenseFixed = [];
@@ -42,8 +43,8 @@ class InvoiceServices
             $dataProfitFixed[$key]['record_type'] = InvoiceConstants::RECORD_TYPE_PROFIT;
             $dataProfitFixed[$key]['name'] = $value['name'];
             $dataProfitFixed[$key]['status'] = $value['profit_record_item_status'];
-            $dataProfitFixed[$key]['date'] = DateUtils::dateToString($value['date']);
-            $dataProfitFixed[$key]['value'] = $value['value'];
+            $dataProfitFixed[$key]['date'] = DateUtils::dateToStringPrefixedDate($value['date'], $month, $year);
+            $dataProfitFixed[$key]['value'] = MoneyUtils::floatToString($value['value']);
             $dataProfitFixed[$key]['type'] = $value['type'];
             $dataProfitFixed[$key]['repeat'] = $value['repeat'];
             $dataProfitFixed[$key]['profit_id'] = $value['profit_id'];
@@ -55,7 +56,7 @@ class InvoiceServices
             $dataProfitVariable[$key]['name'] = $value['name'];
             $dataProfitVariable[$key]['status'] = $value['profit_record_item_status'];
             $dataProfitVariable[$key]['date'] = DateUtils::dateToString($value['date']);
-            $dataProfitVariable[$key]['value'] = $value['value'];
+            $dataProfitVariable[$key]['value'] = MoneyUtils::floatToString($value['value']);
             $dataProfitVariable[$key]['type'] = $value['type'];
             $dataProfitVariable[$key]['repeat'] = $value['repeat'];
             $dataProfitVariable[$key]['profit_id'] = $value['profit_id'];
@@ -66,8 +67,8 @@ class InvoiceServices
             $dataExpenseFixed[$key]['record_type'] = InvoiceConstants::RECORD_TYPE_EXPENSE;
             $dataExpenseFixed[$key]['name'] = $value['name'];
             $dataExpenseFixed[$key]['status'] = $value['invoice_item_status'];
-            $dataExpenseFixed[$key]['date'] = DateUtils::dateToString($value['date']);
-            $dataExpenseFixed[$key]['value'] = $value['value'];
+            $dataExpenseFixed[$key]['date'] = DateUtils::dateToStringPrefixedDate($value['date'], $month, $year);
+            $dataExpenseFixed[$key]['value'] = MoneyUtils::floatToString($value['value']);
             $dataExpenseFixed[$key]['type'] = $value['type'];
             $dataExpenseFixed[$key]['repeat'] = $value['repeat'];
             $dataExpenseFixed[$key]['expense_id'] = $value['expense_id'];;
@@ -79,7 +80,7 @@ class InvoiceServices
             $dataExpenseVariable[$key]['name'] = $value['name'];
             $dataExpenseVariable[$key]['status'] = $value['invoice_item_status'];
             $dataExpenseVariable[$key]['date'] = DateUtils::dateToString($value['date']);
-            $dataExpenseVariable[$key]['value'] = $value['value'];
+            $dataExpenseVariable[$key]['value'] = MoneyUtils::floatToString($value['value']);
             $dataExpenseVariable[$key]['type'] = $value['type'];
             $dataExpenseVariable[$key]['repeat'] = $value['repeat'];
             $dataExpenseVariable[$key]['expense_id'] = $value['expense_id'];
@@ -118,20 +119,24 @@ class InvoiceServices
         return true;
     }
 
-    public static function getInvoiceFixedByDate($dateStart)
+    public static function getInvoiceFixedByDate($dateStart, $dateEnd)
     {
         return User::where([
             ['users.id', Auth::id()],
             ['ex.type', 1],
-            ['ex.date', '>=', $dateStart],
+            ['ex.date', '<=', $dateEnd],
             ['ex.deleted_at', null],
         ])
             ->leftJoin('expenses as ex', 'users.id', '=', 'ex.user_id')
-            ->leftJoin('invoice_items as in_i', 'ex.id', '=', 'in_i.expense_id')
+            ->leftJoin('invoice_items', function ($join) use ($dateStart, $dateEnd) {
+                $join->on('ex.id', '=', 'invoice_items.expense_id')
+                    ->where('invoice_items.date', '>=', $dateStart)
+                    ->where('invoice_items.date', '<=', $dateEnd);
+            })
             ->select(
-                'ex.name as name', 'ex.date', 'in_i.id as invoice_item_id', 'ex.value', 'ex.type', 'ex.repeat', 'ex.id as expense_id',
+                'ex.name as name', 'ex.date', 'invoice_items.id as invoice_item_id', 'ex.value', 'ex.type', 'ex.repeat', 'ex.id as expense_id',
                 DB::raw("(
-                    CASE WHEN in_i.status = 1 THEN 1 ELSE 2
+                    CASE WHEN invoice_items.status = 1 THEN 1 ELSE 2
                 END) as invoice_item_status")
             )
             ->get();
@@ -213,6 +218,23 @@ class InvoiceServices
     }
 
     /**
+     * Get existent [ExpenseRecord]
+     * @param $month
+     * @param $year
+     * @return mixed
+     */
+    private function __getExistentInvoiceItemDate($expense_id, $month, $year)
+    {
+        return InvoiceItems::where([
+            ['invoices.user_id', '=', Auth::id()],
+            ['invoices.year', $year],
+            ['invoices.month', $month],
+            ['invoice_items.expense_id', $expense_id],
+        ])->join('invoices', 'invoices.id', '=', 'invoice_items.invoice_id')
+            ->first();
+    }
+
+    /**
      * Get existent [InvoiceItems]
      * @param $expenseData
      * @param $invoiceData
@@ -284,5 +306,76 @@ class InvoiceServices
         }
 
         return $getExistent;
+    }
+
+    public function payInvoice($data)
+    {
+        $date = DateUtils::stringToArray($data['date']);
+        if (empty($data['invoice_item_id'])) {
+            $existentInvoice = $this->__getExistentInvoice($date['month'], $date['year']);
+
+            if (empty($existentInvoice)) {
+                $existentInvoice = $this->insertInvoicesByDate($date['month'], $date['year']);
+            }
+
+            $existentInvoiceItem = $this->__getExistentInvoiceItemDate($data['expense_id'], $date['month'], $date['year']);
+
+            if (empty($existentInvoiceItem)) {
+                return $this->payNotCreatedInvoiceItem($data, $existentInvoice['id']);
+            }
+
+            return $this->payCreatedInvoiceItem($existentInvoice['id']);
+        } else {
+            return $this->payCreatedInvoiceItem($data['invoice_item_id']);
+        }
+    }
+
+    public function refundInvoice($data)
+    {
+        $date = DateUtils::stringToArray($data['date']);
+
+        if (empty($data['invoice_item_id'])) {
+            $existentInvoice = $this->__getExistentInvoice($date['month'], $date['year']);
+
+            if (empty($existentInvoice)) {
+                $existentInvoice = $this->insertInvoicesByDate($date['month'], $date['year']);
+            }
+
+            $existentInvoiceItem = $this->__getExistentInvoiceItemDate($data['expense_id'], $date['month'], $date['year']);
+
+            if (empty($existentInvoiceItem)) {
+                return $this->payNotCreatedInvoiceItem($data, $existentInvoice['id'], 2);
+            }
+
+            return $this->payCreatedInvoiceItem($existentInvoiceItem['id'], 2);
+        } else {
+            return $this->payCreatedInvoiceItem($data['invoice_item_id'], 2);
+        }
+    }
+
+    private function payNotCreatedInvoiceItem($data, $invoice_id, $status = 1)
+    {
+        $date = DateUtils::stringToDate($data['date']);
+        $value = MoneyUtils::stringToFloat($data['value']);
+
+        return InvoiceItems::create([
+            'invoice_id' => $invoice_id,
+            'user_id' => Auth::id(),
+            'expense_id' => $data['expense_id'],
+            'name' => $data['name'],
+            'description' => '',
+            'value' => $value,
+            'date' => "$date",
+            'status' => $status
+        ]);
+    }
+
+    private function payCreatedInvoiceItem($invoice_item_id, $status = 1)
+    {
+        return InvoiceItems::where([
+            ['id', $invoice_item_id],
+        ])->update([
+            'status' => $status
+        ]);
     }
 }

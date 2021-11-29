@@ -3,6 +3,7 @@
 namespace App\Http\Services;
 
 use App\Http\Utils\DateUtils;
+use App\Http\Utils\MoneyUtils;
 use App\Models\Profit;
 use App\Http\Constants\ProfitConstants;
 use App\Models\ProfitRecordItems;
@@ -98,20 +99,41 @@ class ProfitRecordsServices
         ])->first();
     }
 
-    public static function getProfitRecordFixedByDate($dateStart)
+    /**
+     * Get existent [ProfitRecord]
+     * @param $month
+     * @param $year
+     * @return mixed
+     */
+    private function __getExistentProfitRecordItemDate($profit_id, $month, $year)
+    {
+        return ProfitRecordItems::where([
+            ['profit_records.user_id', '=', Auth::id()],
+            ['profit_records.year', $year],
+            ['profit_records.month', $month],
+            ['profit_record_items.profit_id', $profit_id],
+        ])->join('profit_records', 'profit_records.id', '=', 'profit_record_items.profit_record_id')
+            ->first();
+    }
+
+    public static function getProfitRecordFixedByDate($dateStart, $dateEnd)
     {
         return User::where([
             ['users.id', Auth::id()],
             ['p.type', 1],
-            ['p.date', '>=', $dateStart],
+            ['p.date', '<=', $dateEnd],
             ['p.deleted_at', null],
         ])
             ->leftJoin('profits as p', 'users.id', '=', 'p.user_id')
-            ->leftJoin('profit_record_items as pr_i', 'p.id', '=', 'pr_i.profit_id')
+            ->leftJoin('profit_record_items', function ($join) use ($dateStart, $dateEnd) {
+                $join->on('p.id', '=', 'profit_record_items.profit_id')
+                    ->where('profit_record_items.date', '>=', $dateStart)
+                    ->where('profit_record_items.date', '<=', $dateEnd);
+            })
             ->select(
-                'p.name as name', 'p.date', 'pr_i.id as profit_record_item_id', 'p.value', 'p.type', 'p.repeat', 'p.id as profit_id',
+                'p.name as name', 'p.date', 'profit_record_items.id as profit_record_item_id', 'p.value', 'p.type', 'p.repeat', 'p.id as profit_id',
                 DB::raw("(
-                    CASE WHEN pr_i.status = 1 THEN 1 ELSE 2
+                    CASE WHEN profit_record_items.status = 1 THEN 1 ELSE 2
                 END) as profit_record_item_status")
             )
             ->get();
@@ -207,5 +229,77 @@ class ProfitRecordsServices
         }
 
         return $getExistent;
+    }
+
+
+    public function receiveProfitRecord($data)
+    {
+        $date = DateUtils::stringToArray($data['date']);
+        if (empty($data['profit_record_item_id'])) {
+            $existentInvoice = $this->__getExistentProfitRecord($date['month'], $date['year']);
+
+            if (empty($existentInvoice)) {
+                $existentInvoice = $this->insertProfitRecordsByDate($date['month'], $date['year']);
+            }
+
+            $existentInvoiceItem = $this->__getExistentProfitRecordItemDate($data['profit_id'], $date['month'], $date['year']);
+
+            if (empty($existentInvoiceItem)) {
+                return $this->receiveNotCreatedProfitRecordItem($data, $existentInvoice['id']);
+            }
+
+            return $this->receiveCreatedProfitRecordItem($existentInvoice['id']);
+        } else {
+            return $this->receiveCreatedProfitRecordItem($data['profit_record_item_id']);
+        }
+    }
+
+    public function refundProfitRecord($data)
+    {
+        $date = DateUtils::stringToArray($data['date']);
+
+        if (empty($data['profit_record_item_id'])) {
+            $existentInvoice = $this->__getExistentProfitRecord($date['month'], $date['year']);
+
+            if (empty($existentInvoice)) {
+                $existentInvoice = $this->insertProfitRecordsByDate($date['month'], $date['year']);
+            }
+
+            $existentInvoiceItem = $this->__getExistentProfitRecordItemDate($data['profit_id'], $date['month'], $date['year']);
+
+            if (empty($existentInvoiceItem)) {
+                return $this->receiveNotCreatedProfitRecordItem($data, $existentInvoice['id'], 2);
+            }
+
+            return $this->receiveCreatedProfitRecordItem($existentInvoiceItem['id'], 2);
+        } else {
+            return $this->receiveCreatedProfitRecordItem($data['profit_record_item_id'], 2);
+        }
+    }
+
+    private function receiveNotCreatedProfitRecordItem($data, $profit_record_id, $status = 1)
+    {
+        $date = DateUtils::stringToDate($data['date']);
+        $value = MoneyUtils::stringToFloat($data['value']);
+
+        return ProfitRecordItems::create([
+            'profit_record_id' => $profit_record_id,
+            'user_id' => Auth::id(),
+            'profit_id' => $data['profit_id'],
+            'name' => $data['name'],
+            'description' => '',
+            'value' => $value,
+            'date' => $date,
+            'status' => $status
+        ]);
+    }
+
+    private function receiveCreatedProfitRecordItem($profit_record_item_id, $status = 1)
+    {
+        return ProfitRecordItems::where([
+            ['id', $profit_record_item_id],
+        ])->update([
+            'status' => $status
+        ]);
     }
 }

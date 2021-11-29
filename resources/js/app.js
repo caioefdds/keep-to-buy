@@ -6,6 +6,7 @@ import VueAxios from 'vue-axios'
 import Loading from 'vue-loading-overlay';
 import VueToast from 'vue-toast-notification';
 import 'vue-toast-notification/dist/theme-sugar.css';
+import 'vue-loading-overlay/dist/vue-loading.css';
 
 Vue.use(VueAxios, axios);
 Vue.use(VueToast);

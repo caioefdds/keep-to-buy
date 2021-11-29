@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Constants\InvoiceConstants;
 use App\Http\Controllers\Controller;
 use App\Http\Services\InvoiceServices;
 use App\Http\Utils\DateUtils;
@@ -11,7 +12,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class InvoicesController extends Controller
+class InvoiceItemsController extends Controller
 {
     private $invoiceService;
 
@@ -20,13 +21,20 @@ class InvoicesController extends Controller
         $this->invoiceService = $invoiceService;
     }
 
-    public function index()
+    public function pay(Request $request)
     {
-        $dateTime = date('Y-m-d');
-        $date = DateUtils::getArrayFromDate($dateTime);
-        $dataTable = $this->getDataTableByDate($date[1], $date[0]);
+        if (empty($request->data)) {
+            return Response::error([], 'Dados inválidos');
+        }
 
-        return view('pages.index', compact('dataTable'));
+        $requestData = $request->data;
+        if ($requestData['status'] == InvoiceConstants::STATUS_PAID) {
+            $this->invoiceService->refundInvoice($requestData);
+            return Response::success([], '', 201);
+        } elseif ($requestData['status'] == InvoiceConstants::STATUS_PENDING) {
+            $this->invoiceService->payInvoice($requestData);
+            return Response::success([], '', 201);
+        }
     }
 
     public function get(Request $request): JsonResponse

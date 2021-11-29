@@ -108,6 +108,8 @@ use App\Http\Controllers\Admin\ProfitsController;
 use App\Http\Controllers\Admin\ExpensesController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\GroupController;
+use App\Http\Controllers\Admin\InvoiceItemsController;
+use App\Http\Controllers\Admin\ProfitRecordItemsController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use Dotenv\Loader\Loader;
@@ -144,6 +146,20 @@ Route::get('/', function () {
 Route::middleware('auth')->prefix('admin')->group(function () {
     Route::get('/', [InvoicesController::class, 'index']);
     Route::get('index', [InvoicesController::class, 'index']);
+
+    Route::prefix('invoices')->group(function () {
+        Route::post('/get', [InvoicesController::class, 'get']);
+    });
+
+    Route::prefix('invoice_items')->group(function () {
+        Route::post('/pay', [InvoiceItemsController::class, 'pay']);
+        Route::post('/refund', [InvoiceItemsController::class, 'refund']);
+    });
+
+    Route::prefix('profit_records')->group(function () {
+        Route::post('/receive', [ProfitRecordItemsController::class, 'receive']);
+        Route::post('/refund', [ProfitRecordItemsController::class, 'refund']);
+    });
 
     Route::prefix('profits')->group(function () {
         Route::get('/', [ProfitsController::class, 'index']);
