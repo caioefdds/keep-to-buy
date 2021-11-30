@@ -62,9 +62,9 @@
 														</li>
 													</ul>
 												</div>
-												<div class="col-lg-12 col-sm-12 mt-3 mt-lg-0 text-center">
-													Copyright © 2021 <a href="#">Zanex</a>. Designed by <a href="#">Spruko</a> All rights reserved.
-												</div>
+                                                <div class="col-md-12 col-sm-12 text-center">
+                                                    Copyright © 2021 <a href="#">Keep to Buy</a>. Desenvolvido por <a href="https://www.linkedin.com/in/caioefdds/"> Caio Fagundes </a> Todos direitos reservados
+                                                </div>
 											</div>
 										</div>
 									</div>
@@ -107,9 +107,9 @@
 														</ul>
 													</div>
 												</div>
-												<div class="col-lg-6 col-sm-12 col-md-7 mt-3 mt-lg-0 text-center">
-													Copyright © 2021 <a href="#">Zanex</a>. Designed by <a href="#">Spruko</a> All rights reserved.
-												</div>
+                                                <div class="col-md-12 col-sm-12 text-center">
+                                                    Copyright © 2021 <a href="#">Keep to Buy</a>. Desenvolvido por <a href="https://www.linkedin.com/in/caioefdds/"> Caio Fagundes </a> Todos direitos reservados
+                                                </div>
 											</div>
 										</div>
 									</div>
@@ -159,9 +159,9 @@
 												</div>
 											</div>
 											<div class="row align-items-center flex-row-reverse">
-												<div class="col-lg-12 col-sm-12 mt-3 mt-lg-0 text-center">
-													Copyright © 2021 <a href="#">Zanex</a>. Designed by <a href="#">Spruko</a> All rights reserved.
-												</div>
+                                                <div class="col-md-12 col-sm-12 text-center">
+                                                    Copyright © 2021 <a href="#">Keep to Buy</a>. Desenvolvido por <a href="https://www.linkedin.com/in/caioefdds/"> Caio Fagundes </a> Todos direitos reservados
+                                                </div>
 											</div>
 										</div>
 									</div>
@@ -182,9 +182,9 @@
 									<div class="footer border-top-0 footer-1">
 										<div class="container">
 											<div class="row align-items-center flex-row-reverse">
-												<div class="col-lg-12 col-sm-12 mt-3 mt-lg-0 text-center">
-													Copyright © 2021 <a href="#">Zanex</a>. Designed by <a href="#">Spruko</a> All rights reserved.
-												</div>
+                                                <div class="col-md-12 col-sm-12 text-center">
+                                                    Copyright © 2021 <a href="#">Keep to Buy</a>. Desenvolvido por <a href="https://www.linkedin.com/in/caioefdds/"> Caio Fagundes </a> Todos direitos reservados
+                                                </div>
 											</div>
 										</div>
 									</div>
