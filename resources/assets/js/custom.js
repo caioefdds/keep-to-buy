@@ -1,19 +1,19 @@
 (function($) {
 	"use strict";
-	
+
 	//Color-Theme
 	$(document).on("click", "a[data-theme]", function() {
 		$("head link#theme").attr("href", $(this).data("theme"));
 		$(this).toggleClass('active').siblings().removeClass('active');
 	});
-	
-	
+
+
 	// FAQ Accordion
 	$(document).on("click", '[data-bs-toggle="collapse"]', function() {
 		$(this).toggleClass('active').siblings().removeClass('active');
 	});
-	
-	
+
+
 	// ______________Full screen
 	$(document).on("click", ".fullscreen-button", function toggleFullScreen() {
 	  $('html').addClass('fullscreen-button');
@@ -40,12 +40,12 @@
 			}
 		}
 	})
-	
+
 	// ______________ PAGE LOADING
 	$(window).on("load", function(e) {
 		$("#global-loader").fadeOut("slow");
 	})
-	
+
 	// ______________ BACK TO TOP BUTTON
 	$(window).on("scroll", function(e) {
 		if ($(this).scrollTop() > 0) {
@@ -60,8 +60,8 @@
 		}, 0);
 		return false;
 	});
-	
-	
+
+
 	// ______________ COVER IMAGE
 	$(".cover-image").each(function() {
 		var attr = $(this).attr('data-bs-image-src');
@@ -87,7 +87,7 @@
 			}
 		});
 	});
-	
+
 	// ______________Chart-circle
 	if ($('.chart-circle').length) {
 		$('.chart-circle').each(function() {
@@ -116,17 +116,17 @@
 		$(this).removeClass(function(index, className) {
 			return (className.match(/(^|\s)effect-\S+/g) || []).join(' ');
 		});
-	}); 
-	
+	});
+
 	// ______________ CARD
 	const DIV_CARD = 'div.card';
-	
+
 	// ___________TOOLTIP
 	var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
 	var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
 		return new bootstrap.Tooltip(tooltipTriggerEl)
 	})
-	
+
 	// __________POPOVER
 	var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'))
 	var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
@@ -143,7 +143,7 @@
 
 		});
 	});
-	
+
 	// ______________ FUNCTION FOR REMOVE CARD
 	$(document).on('click', '[data-bs-toggle="card-remove"]', function(e) {
 		let $card = $(this).closest(DIV_CARD);
@@ -151,8 +151,8 @@
 		e.preventDefault();
 		return false;
 	});
-	
-	
+
+
 	// ______________ FUNCTIONS FOR COLLAPSED CARD
 	$(document).on('click', '[data-bs-toggle="card-collapse"]', function(e) {
 		let $card = $(this).closest(DIV_CARD);
@@ -160,7 +160,7 @@
 		e.preventDefault();
 		return false;
 	});
-	
+
 	// ______________ CARD FULL SCREEN
 	$(document).on('click', '[data-bs-toggle="card-fullscreen"]', function(e) {
 		let $card = $(this).closest(DIV_CARD);
@@ -168,7 +168,7 @@
 		e.preventDefault();
 		return false;
 	});
-	
+
 
 	//Input file-browser
 	$(document).on('change', '.file-browserinput', function() {
@@ -188,20 +188,25 @@
 				if( log ) alert(log);
 			}
 	});
-	
 
-	
+
+
 	// ______________ SWITCHER-toggle ______________//
-	
+
 	$('.layout-setting').on("click", function(e) {
 		if (document) {
 			$('body').toggleClass('dark-mode');
+
+            let request = $.ajax({
+                type: "GET",
+                url: '/admin/profile/changeTheme',
+            });
 		} else {
 			$('body').removeClass('dark-mode');
 			$('body').addClass('light-mode');
 		}
 	});
-	
+
 	/*Theme Layout*/
 	// $('body').addClass('dark-mode');
 	// $('body').addClass ('light-mode');
@@ -231,5 +236,5 @@
 	/*Header-Position Styles*/
 	// $('body').addClass('fixed-layout');
 	// $('body').addClass('scrollable-layout');
-	
+
 })(jQuery);

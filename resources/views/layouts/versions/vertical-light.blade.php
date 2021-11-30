@@ -53,6 +53,19 @@
 		</div>
 
         @include('layouts.vertical.scripts')
+        <script>
+            let request = $.ajax({
+                type: "GET",
+                url: '/admin/profile/getTheme',
+            });
+
+            request.done((result) => {
+                if (result === 'dark') {
+                    $('body').removeClass('light-mode');
+                    $('body').addClass('dark-mode');
+                }
+            });
+        </script>
 
 	</body>
 </html>

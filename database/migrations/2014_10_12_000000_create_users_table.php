@@ -19,6 +19,7 @@ class CreateUsersTable extends Migration
             $table->string('nickname')->nullable();
             $table->string('email')->unique();
             $table->string('password');
+            $table->string('theme')->default('light');
             $table->longText('image')->nullable();
             $table->integer('type');
             $table->integer('status');

@@ -140,9 +140,9 @@ Route::prefix('login')->group(function () {
     Route::post('/', [LoginController::class, 'authenticate']);
 });
 
-Route::get('/', function () {
-    return view('livewire.index');
-});
+Route::get('logout', [LoginController::class, 'logout'])->name('logout');
+
+Route::get('/', Login::class)->name('index');
 
 Route::middleware('auth')->prefix('admin')->group(function () {
     Route::get('/', [InvoicesController::class, 'index']);
@@ -153,9 +153,11 @@ Route::middleware('auth')->prefix('admin')->group(function () {
     });
 
     Route::prefix('profile')->group(function () {
-        Route::get('/', [ProfileController::class, 'index']);
+        Route::get('/', [ProfileController::class, 'index'])->name('profile');
         Route::get('/get/{id}', [ProfileController::class, 'get']);
         Route::post('/update', [ProfileController::class, 'update']);
+        Route::get('/getTheme', [ProfileController::class, 'getTheme']);
+        Route::get('/changeTheme', [ProfileController::class, 'changeTheme']);
     });
 
     Route::prefix('invoice_items')->group(function () {

@@ -8,13 +8,13 @@
                         <div class="col-12">
                             <div class="wideget-user">
                                 <div class="row">
-                                    <div class="col-lg-12 col-md-12 col-xl-6">
-                                        <div class="wideget-user-desc d-flex">
-                                            <div class="wideget-user-img" @click="openImageInput">
-                                                <img class="" src="/assets/images/users/1.jpg" width="150px" height="150px" v-if="formData.image == null">
-                                                <img class="" :src="formData.image" width="150px" height="150px" v-else>
+                                    <div class="col-lg-12">
+                                        <div class="wideget-user-desc d-flex flex-wrap justify-content-center">
+                                            <div class="wideget-user-img my-5" @click="openImageInput">
+                                                <img class="image-avatar" src="/assets/images/users/1.jpg" v-if="formData.image == null">
+                                                <img class="image-avatar" :src="formData.image" v-else>
                                             </div>
-                                            <div class="my-auto">
+                                            <div class="my-auto ms-4">
                                                 <div class="name_title">{{ formData.name }}</div>
                                             </div>
                                         </div>

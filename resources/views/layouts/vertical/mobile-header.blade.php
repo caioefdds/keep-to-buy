@@ -155,18 +155,18 @@
 								<div class="dropdown d-none d-md-flex profile-1">
 									<a href="#" data-bs-toggle="dropdown" class="nav-link pe-2 leading-none d-flex">
 										<span>
-											<img src="{{ asset('assets/images/users/8.jpg') }}" alt="profile-user" class="avatar  profile-user brround cover-image">
+											<img src="{{ Session::get('image') ?? asset('assets/images/users/1.jpg') }}" alt="profile-user" class="avatar  profile-user brround cover-image">
 										</span>
 									</a>
-									<div class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+									<div class="dropdown-menu dropdown-menu-end dropdown-menu-arrow ml">
 										<div class="drop-heading">
 											<div class="text-center">
-												<h5 class="text-dark mb-0">Caio Fagundes</h5>
+												<h5 class="text-dark mb-0">{{ Session::get('nameExhibition') ?? '' }}</h5>
 												<small class="text-muted">Usuário</small>
 											</div>
 										</div>
 										<div class="dropdown-divider m-0"></div>
-										<a class="dropdown-item" href="{{ url('profile') }}">
+										<a class="dropdown-item" href="{{ url('/admin/profile') }}">
 											<i class="dropdown-icon fe fe-user"></i> Perfil
 										</a>
                                         <a class="dropdown-item" href="{{ url('logout') }}">
@@ -325,18 +325,18 @@
 							<div class="dropdown d-md-flex profile-1">
 								<a href="#" data-bs-toggle="dropdown" class="nav-link pe-2 leading-none d-flex">
 									<span>
-										<img src="{{ asset('assets/images/users/8.jpg') }}" alt="profile-user" class="avatar  profile-user brround cover-image">
+										<img src="{{ Session::get('image') ?? asset('assets/images/users/1.jpg') }}" alt="profile-user" class="avatar  profile-user brround cover-image">
 									</span>
 								</a>
 								<div class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
 									<div class="drop-heading">
 										<div class="text-center">
-											<h5 class="text-dark mb-0">Elizabeth Dyer</h5>
+											<h5 class="text-dark mb-0">{{ Session::get('nameExhibition') ?? '' }}</h5>
 											<small class="text-muted">Usuário</small>
 										</div>
 									</div>
 									<div class="dropdown-divider m-0"></div>
-									<a class="dropdown-item" href="{{url('profile')}}">
+									<a class="dropdown-item" href="{{url('/admin/profile')}}">
                                         <i class="dropdown-icon fe fe-user"></i> Perfil
 									</a>
 {{--									<a class="dropdown-item" href="{{url('email')}}">--}}

@@ -4,5 +4,13 @@
 
 .name_title {
     font-size: 1.6rem;
+    word-break: break-word;
+}
+
+.image-avatar {
+    width: 150px;
+    min-width: 150px;
+    height: 150px;
+    min-height: 150px;
 }
 

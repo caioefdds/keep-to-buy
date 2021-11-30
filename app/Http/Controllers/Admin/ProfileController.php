@@ -2,15 +2,16 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Controller;
 use App\Http\Requests\ProfileRequest;
 use App\Http\Utils\DateUtils;
 use App\Http\Utils\Response;
 use App\Models\User;
-use Carbon\Traits\Date;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
 
-class ProfileController
+class ProfileController extends Controller
 {
 
     public function index()
@@ -52,5 +53,32 @@ class ProfileController
         }
 
         return Response::success([], "Perfil editado com sucesso!", 201);
+    }
+
+    public function changeTheme()
+    {
+        $newTheme = 'light';
+        $user = User::find(Auth::id());
+
+        if ($user['theme'] == 'light') {
+            $newTheme = 'dark';
+        }
+
+        Session::forget('theme');
+        Session::put('theme', $newTheme);
+
+        return User::find(Auth::id())->update([
+            'theme' => $newTheme
+        ]);
+    }
+
+    public function getTheme()
+    {
+        if (Session::exists('theme')) {
+            return Session::get('theme');
+        }
+
+        $user = User::find(Auth::id());
+        return $user['theme'];
     }
 }
