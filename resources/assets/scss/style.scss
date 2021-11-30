@@ -4,7 +4,7 @@
 Project        :   Zanex – Bootstrap  Admin & Dashboard Template
 Version        :   V.1
 Create Date    :   14/07/21
-Copyright      :   Spruko Technologies Private Limited 
+Copyright      :   Spruko Technologies Private Limited
 Author         :   Spruko
 Author URL     :   https://themeforest.net/user/spruko
 Support	       :   support@spruko.com
@@ -89,7 +89,7 @@ License        :   Licensed under ThemeForest License
 @import "custom/Fonts/fonts";
 
 
-/* ######## BOOTSTRAP ######## */ 
+/* ######## BOOTSTRAP ######## */
 @import "variables";
 @import "bootstrap/bootstrap-styles";
 @import "bootstrap/accordion";
@@ -117,7 +117,7 @@ License        :   Licensed under ThemeForest License
 @import "bootstrap/thumbnail";
 @import "bootstrap/tooltip";
 
-/*  ######## CUSTOM-STYLES ######## */ 
+/*  ######## CUSTOM-STYLES ######## */
 @import "custom/components-col";
 @import "custom/count-down";
 @import "custom/custom-forms";
@@ -172,3 +172,6 @@ License        :   Licensed under ThemeForest License
 @import "utilities/position";
 @import "utilities/typography";
 @import "utilities/width";
+
+/* ######## PAGES-STYLES ######## */
+@import "pages/profile";

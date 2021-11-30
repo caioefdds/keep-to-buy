@@ -51,6 +51,21 @@ class DateUtils
     /**
      * @throws Exception
      */
+    public static function validateBirthDate($date): bool
+    {
+        $currentDate = self::dateToArray(self::getCurrentDate());
+        $birthDate = self::dateToArray($date);
+
+        if ($birthDate['year'] >= $currentDate['year']) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * @throws Exception
+     */
     public static function getLastDayOfMonth($date)
     {
         $dateTime = new DateTime($date);
@@ -130,6 +145,12 @@ class DateUtils
     {
         $d = DateTime::createFromFormat($format, $date);
         return $d && $d->format($format) == $date;
+    }
+
+    public static function getCurrentDate(): string
+    {
+        $dateTime = new DateTime('now');
+        return $dateTime->format('Y-m-d');
     }
 
     public static function formatDate($date)

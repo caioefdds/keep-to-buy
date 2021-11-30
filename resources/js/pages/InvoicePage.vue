@@ -257,7 +257,11 @@ export default {
                     editData: this.editData
                 }
             }).then((response) => {
-                console.log(response)
+                if (response.status === 201) {
+                    this.getInvoice(this.dateMonth, this.dateYear);
+                    this.$toast.open(response.data.msg);
+                    $('#modalEdit').modal('hide');
+                }
             }).catch((error) => {
             });
         },
@@ -272,7 +276,11 @@ export default {
                     typeActionDelete: this.typeActionDelete
                 }
             }).then((response) => {
-                console.log(response)
+                if (response.status === 201) {
+                    this.getInvoice(this.dateMonth, this.dateYear);
+                    this.$toast.open(response.data.msg);
+                    $('#modalEdit').modal('hide');
+                }
             }).catch((error) => {
             });
         },
@@ -289,7 +297,6 @@ export default {
                 loader.hide();
                 this.consultKey++;
                 this.dataTable = response.data.data;
-                console.log(this.dataTable)
             }).catch((error) => {
                 loader.hide();
                 if (error.response.status === 419) {
@@ -366,10 +373,7 @@ export default {
             await this.axios.post('/admin/invoice_items/pay', {
                 data: data
             }).then((response) => {
-                console.log(response)
                 if (response.status === 201) {
-                    console.log(this.dateMonth)
-                    console.log(this.dateYear)
                     this.getInvoice(this.dateMonth, this.dateYear);
                 }
             }).catch((error) => {

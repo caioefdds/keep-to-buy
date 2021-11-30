@@ -110,6 +110,7 @@ use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\GroupController;
 use App\Http\Controllers\Admin\InvoiceItemsController;
 use App\Http\Controllers\Admin\ProfitRecordItemsController;
+use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use Dotenv\Loader\Loader;
@@ -149,6 +150,12 @@ Route::middleware('auth')->prefix('admin')->group(function () {
 
     Route::prefix('invoices')->group(function () {
         Route::post('/get', [InvoicesController::class, 'get']);
+    });
+
+    Route::prefix('profile')->group(function () {
+        Route::get('/', [ProfileController::class, 'index']);
+        Route::get('/get/{id}', [ProfileController::class, 'get']);
+        Route::post('/update', [ProfileController::class, 'update']);
     });
 
     Route::prefix('invoice_items')->group(function () {
@@ -285,7 +292,6 @@ Route::get('notify', Notify::class);
 Route::get('pagination', Pagination::class);
 Route::get('panels', Panels::class);
 Route::get('pricing', Pricing::class);
-Route::get('profile', Profile::class);
 Route::get('progress', Progress::class);
 Route::get('rangeslider', Rangeslider::class);
 Route::get('rating', Rating::class);
