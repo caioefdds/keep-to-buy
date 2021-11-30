@@ -362,4 +362,10 @@
     <script src="{{ asset('assets/plugins/datatable/dataTables.responsive.min.js') }}"></script>
     <script src="{{ asset('assets/plugins/datatable/responsive.bootstrap5.min.js') }}"></script>
     <script src="{{ asset('assets/js/table-data.js') }}"></script>
+
+    <!-- MONEY MASK -->
+    <script src="{{ asset('assets/js/jquery-mask-money.js') }}"></script>
+
+    <!-- FORMELEMENTS JS -->
+    <script src="{{ asset('assets/js/form-elements.js') }}"></script>
 @endsection

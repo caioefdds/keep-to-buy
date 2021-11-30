@@ -15,6 +15,12 @@ use Throwable;
 
 class InvoiceServices
 {
+    private $invoiceItemRegistryServices;
+
+    public function __construct(InvoiceItemRegistryServices $invoiceItemRegistryServices)
+    {
+        $this->invoiceItemRegistryServices = $invoiceItemRegistryServices;
+    }
 
     public function getInvoicesAndRecords($month, $year): array
     {
@@ -126,6 +132,7 @@ class InvoiceServices
             ['ex.type', 1],
             ['ex.date', '<=', $dateEnd],
             ['ex.deleted_at', null],
+            ['invoice_items.deleted_at', null],
         ])
             ->leftJoin('expenses as ex', 'users.id', '=', 'ex.user_id')
             ->leftJoin('invoice_items', function ($join) use ($dateStart, $dateEnd) {
@@ -134,10 +141,10 @@ class InvoiceServices
                     ->where('invoice_items.date', '<=', $dateEnd);
             })
             ->select(
-                'ex.name as name', 'ex.date', 'invoice_items.id as invoice_item_id', 'ex.value', 'ex.type', 'ex.repeat', 'ex.id as expense_id',
-                DB::raw("(
-                    CASE WHEN invoice_items.status = 1 THEN 1 ELSE 2
-                END) as invoice_item_status")
+                'ex.date', 'invoice_items.id as invoice_item_id', 'ex.type', 'ex.repeat', 'ex.id as expense_id',
+                DB::raw("(CASE WHEN invoice_items.status = 1 THEN 1 ELSE 2 END) as invoice_item_status"),
+                DB::raw("(CASE WHEN invoice_items.value != ex.value THEN invoice_items.value ELSE ex.value END) as value"),
+                DB::raw("(CASE WHEN invoice_items.name != ex.name THEN invoice_items.name ELSE ex.name END) as name"),
             )
             ->get();
     }
@@ -223,7 +230,7 @@ class InvoiceServices
      * @param $year
      * @return mixed
      */
-    private function __getExistentInvoiceItemDate($expense_id, $month, $year)
+    protected function __getExistentInvoiceItemDate($expense_id, $month, $year)
     {
         return InvoiceItems::where([
             ['invoices.user_id', '=', Auth::id()],
@@ -240,7 +247,7 @@ class InvoiceServices
      * @param $invoiceData
      * @return mixed
      */
-    private function __getExistentInvoiceItems($expenseData, $invoiceData)
+    protected function __getExistentInvoiceItems($expenseData, $invoiceData)
     {
         return InvoiceItems::where([
             ['user_id', '=', Auth::id()],
@@ -255,7 +262,7 @@ class InvoiceServices
      * @param $year | year number
      * @return bool
      */
-    private function insertInvoicesByDate($month, $year)
+    protected function insertInvoicesByDate($month, $year)
     {
         $getExistent = $this->__getExistentInvoice($month, $year);
 
@@ -283,7 +290,7 @@ class InvoiceServices
      * @param $date
      * @return false|mixed
      */
-    private function insertInvoiceItems($expenseData, $invoiceData, $date)
+    protected function insertInvoiceItems($expenseData, $invoiceData, $date)
     {
         $getExistent = $this->__getExistentInvoiceItems($expenseData, $invoiceData);
 
@@ -377,5 +384,18 @@ class InvoiceServices
         ])->update([
             'status' => $status
         ]);
+    }
+
+    public function editRegistryInvoiceItem($formData, $editData)
+    {
+        if ($formData['typeAction'] == 1) {
+            return $this->invoiceItemRegistryServices->editSingleRegistry($editData, $formData);
+        } elseif ($formData['typeAction'] == 2) {
+            return $this->invoiceItemRegistryServices->editPendingRegistry($editData, $formData);
+        } elseif ($formData['typeAction'] == 3) {
+            return $this->invoiceItemRegistryServices->editAllRegistry($editData, $formData);
+        } else {
+            return false;
+        }
     }
 }

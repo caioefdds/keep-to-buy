@@ -182,7 +182,7 @@ export default {
                 this.$toast.open(result.data.msg);
 
                 if (redirect) {
-                    window.location.href = '/admin/expenses';
+                    // window.location.href = '/admin/expenses';
                 }
             }).catch((error) => {
                 this.getErrors(error.response.data);

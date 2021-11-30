@@ -53,4 +53,17 @@ class InvoiceItemsController extends Controller
     {
         return $this->invoiceService->getInvoicesAndRecords($month, $year);
     }
+
+    public function editRegistry(Request $request)
+    {
+        if (empty($request->data)) {
+            return Response::error([], 'Dados inválidos');
+        }
+
+        $requestData = $request->data;
+        $formData = $requestData['formData'] ?? [];
+        $editData = $requestData['editData'] ?? [];
+
+        $this->invoiceService->editRegistryInvoiceItem($formData, $editData);
+    }
 }

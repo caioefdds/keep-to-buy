@@ -154,11 +154,15 @@ Route::middleware('auth')->prefix('admin')->group(function () {
     Route::prefix('invoice_items')->group(function () {
         Route::post('/pay', [InvoiceItemsController::class, 'pay']);
         Route::post('/refund', [InvoiceItemsController::class, 'refund']);
+        Route::post('/editRegistry', [InvoiceItemsController::class, 'editRegistry']);
+        Route::post('/deleteRegistry', [InvoiceItemsController::class, 'deleteRegistry']);
     });
 
     Route::prefix('profit_records')->group(function () {
         Route::post('/receive', [ProfitRecordItemsController::class, 'receive']);
         Route::post('/refund', [ProfitRecordItemsController::class, 'refund']);
+        Route::post('/editRegistry', [ProfitRecordItemsController::class, 'editRegistry']);
+        Route::post('/deleteRegistry', [ProfitRecordItemsController::class, 'deleteRegistry']);
     });
 
     Route::prefix('profits')->group(function () {

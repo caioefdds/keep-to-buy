@@ -30,7 +30,7 @@
                             </div>
                         </div>
                         <div class="table-responsive">
-                            <table class="table table-bordered text-nowrap border-bottom w-100" id="responsive-datatable">
+                            <table class="table table-bordered text-nowrap border-bottom w-100" id="responsive-datatable-invoices">
                                 <thead>
                                 <tr>
                                     <th class="wd-15p border-bottom-0">Situação</th>
@@ -78,21 +78,12 @@
                                     <td>{{ item.value }}</td>
 <!--                                    <td>{{ item.repeat }}</td>-->
 <!--                                    <td>{{ item.repeat_times }}</td>-->
-                                    <td v-if="parseInt(item.record_type) === 1" class="d-flex justify-content-center p-auto">
-
-                                        <a href="#" class="icons-table text-warning" @click="editRegistry(item.id)">
+                                    <td class="d-flex justify-content-center p-auto">
+                                        <a href="#" class="icons-table text-warning" @click="editModal(item)">
                                             <i class="side-menu__icon fa fa-edit"></i>
                                         </a>
-                                        <a href="" data-bs-target="#modalDelete" data-bs-toggle="modal" class="icons-table text-danger">
-                                            <i class="side-menu__icon fa fa-trash" @click="setDeleteId(item.id)"></i>
-                                        </a>
-                                    </td>
-                                    <td v-else class="d-flex justify-content-center p-auto">
-                                        <a href="#" class="icons-table text-warning" @click="editRegistry(item.id)">
-                                            <i class="side-menu__icon fa fa-edit"></i>
-                                        </a>
-                                        <a href="" data-bs-target="#modalDelete" data-bs-toggle="modal" class="icons-table text-danger">
-                                            <i class="side-menu__icon fa fa-trash" @click="setDeleteId(item.id)"></i>
+                                        <a href="#" class="icons-table text-danger" @click="deleteModal(item)">
+                                            <i class="side-menu__icon fa fa-trash"></i>
                                         </a>
                                     </td>
                                 </tr>
@@ -104,7 +95,59 @@
             </div>
         </div>
 
-        <div class="modal fade"  id="modalDelete">
+        <div class="modal fade" id="modalEdit">
+            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-body p-4">
+                        <button aria-label="Close" class="btn-close" data-bs-dismiss="modal" ><span aria-hidden="true">&times;</span></button>
+                        <div>
+                            <h4>Editar dados</h4>
+                            <hr>
+                            <div class="row mb-5">
+                                <div class="col-lg">
+                                    <label class="form-label">Descrição</label>
+                                    <input type="text" :class="'form-control ' + errors.name" v-model="formData.name">
+                                </div>
+
+                                <div class="col-lg">
+                                    <label class="form-label">Valor</label>
+                                    <input type="text" id="money" :class="'form-control ' + errors.value" v-model="formData.value">
+                                </div>
+
+                                <div class="col-lg">
+                                    <div class="form-group">
+                                        <div class="form-label">Como deseja editar?</div>
+                                        <div class="custom-controls-stacked">
+                                            <label class="custom-control custom-radio">
+                                                <input type="radio" class="custom-control-input" name="example-radios" :value="1" v-model="formData.typeAction" checked>
+                                                <span class="custom-control-label">Editar somente essa</span>
+                                            </label>
+                                            <label class="custom-control custom-radio">
+                                                <input type="radio" class="custom-control-input" name="example-radios" :value="2" v-model="formData.typeAction">
+                                                <span class="custom-control-label">Editar todas pendentes</span>
+                                            </label>
+                                            <label class="custom-control custom-radio">
+                                                <input type="radio" class="custom-control-input" name="example-radios" :value="3" v-model="formData.typeAction">
+                                                <span class="custom-control-label">Editar todas (incluindo as concluídas)</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-12 d-flex justify-content-end">
+                                    <button class="btn btn-danger pd-x-25 me-2" data-bs-dismiss="modal">Cancelar</button>
+                                    <button class="btn btn-success pd-x-25" @click="update">Salvar</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="modalDelete">
             <div class="modal-dialog modal-dialog-centered text-center " role="document">
                 <div class="modal-content tx-size-sm">
                     <div class="modal-body text-center p-4">
@@ -138,19 +181,68 @@ export default {
             dateMonth: '',
             dateMonthName: '',
             dateYear: '',
-            deleteId: null,
+            editData: null,
+            deleteData: null,
+            typeData: null,
             increment: 0,
             consultKey: 0,
+            formData: {
+                name: "",
+                value: "",
+                typeAction: 1
+            },
+            errors: {}
         }
     },
     mounted() {
         let date = new Date();
         this.dateMonthName = this.getMonthName(date.getMonth());
+        this.dateMonth = date.getMonth() + 1;
         this.dateYear = date.getFullYear();
+
+        $("#money").maskMoney({
+            prefix: "R$ ",
+            decimal: ",",
+            thousands: "."
+        });
     },
     methods: {
-        setDeleteId(id) {
-            this.deleteId = id;
+        editModal(data) {
+            this.editData = data;
+            this.formData.name = data.name;
+            this.formData.value = data.value;
+            $('#modalEdit').modal('show');
+        },
+        deleteModal(data) {
+            this.deleteData = data;
+            $('#modalDelete').modal('show');
+        },
+        update() {
+            let urlKey = 'invoice_items';
+            if (parseInt(this.editData.record_type) === 1) {
+                urlKey = 'profit_records';
+            }
+            this.axios.post('/admin/' + urlKey + '/editRegistry', {
+                data: {
+                    formData: this.formData,
+                    editData: this.editData
+                }
+            }).then((response) => {
+                console.log(response)
+            }).catch((error) => {
+            });
+        },
+        delete() {
+            this.axios.post('/admin/expenses/delete', {
+                data: {
+                    id: this.deleteId
+                }
+            }).then((response) => {
+                this.$toast.open(response.data.msg);
+                window.location.reload();
+            }).catch((error) => {
+                this.$toast.error(error.response.data.msg);
+            });
         },
         getInvoice(month, year) {
             let loader = this.$loading.show({
@@ -238,28 +330,6 @@ export default {
 
             return monthName;
         },
-        removeDeleteId() {
-            this.deleteId = null;
-        },
-        floatToMoney(value) {
-            return value.toLocaleString(
-                'pt-br', {
-                    style: 'currency', currency: 'BRL'
-                }
-            );
-        },
-        deleteRegistry() {
-            this.axios.delete('/admin/expenses/delete', {
-                data: {
-                    id: this.deleteId
-                }
-            }).then((response) => {
-                this.$toast.open(response.data.msg);
-                window.location.reload();
-            }).catch((error) => {
-                this.$toast.error(error.response.data.msg);
-            });
-        },
         async payRegistry(data) {
             await this.axios.post('/admin/invoice_items/pay', {
                 data: data
@@ -282,9 +352,6 @@ export default {
                 }
             }).catch((error) => {
             });
-        },
-        editRegistry(id) {
-            window.location.href = '/admin/expenses/edit/' + id
         },
     }
 }
@@ -333,6 +400,9 @@ export default {
 .year_name {
     font-weight: 500;
     font-size: 1.3rem;
+}
+a.text-dark:hover, a.text-dark:focus {
+    color: black!important;
 }
 
 </style>

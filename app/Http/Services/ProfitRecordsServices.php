@@ -131,10 +131,10 @@ class ProfitRecordsServices
                     ->where('profit_record_items.date', '<=', $dateEnd);
             })
             ->select(
-                'p.name as name', 'p.date', 'profit_record_items.id as profit_record_item_id', 'p.value', 'p.type', 'p.repeat', 'p.id as profit_id',
-                DB::raw("(
-                    CASE WHEN profit_record_items.status = 1 THEN 1 ELSE 2
-                END) as profit_record_item_status")
+                'p.date', 'profit_record_items.id as profit_record_item_id', 'p.type', 'p.repeat', 'p.id as profit_id',
+                DB::raw("(CASE WHEN profit_record_items.status = 1 THEN 1 ELSE 2 END) as profit_record_item_status"),
+                DB::raw("(CASE WHEN profit_record_items.value != p.value THEN profit_record_items.value ELSE p.value END) as value"),
+                DB::raw("(CASE WHEN profit_record_items.name != p.name THEN profit_record_items.name ELSE p.name END) as name"),
             )
             ->get();
     }

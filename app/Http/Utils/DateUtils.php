@@ -60,18 +60,18 @@ class DateUtils
 
     public static function dateToStringPrefixedDate($date, $month, $year)
     {
-        if (!empty($date)) {
-            $formattedDate = self::formatDate($date);
-            $array = explode("-", $formattedDate);
+        $currentDateTime = new DateTime("$year-$month-01");
 
-            if (count($array) == 3) {
-                return $array[2] . "/" . $month . "/" . $year;
-            }
+        $day = $currentDateTime->format('d');
+        $month = $currentDateTime->format('m');
+        $year = $currentDateTime->format('Y');
+        $lastDayOfMonth = $currentDateTime->format('t');
 
-            return false;
+        if ($day > $lastDayOfMonth) {
+            return "$lastDayOfMonth/$month/$year";
         }
 
-        return false;
+        return "$day/$month/$year";
     }
 
     public static function dateToString($date)
@@ -151,18 +151,38 @@ class DateUtils
         $dateTime = new DateTime($selectedDate);
 
         $dates = [];
+        $day = $dateTime->format('d');
+        $month = $dateTime->format('m');
+        $year = $dateTime->format('Y');
+
         $dates[0]['date'] = $dateTime->format('Y-m-d');
-        $dates[0]['day'] = $dateTime->format('m');
-        $dates[0]['month'] = $dateTime->format('m');
-        $dates[0]['year'] = $dateTime->format('Y');
+        $dates[0]['day'] = $day;
+        $dates[0]['month'] = $month;
+        $dates[0]['year'] = $year;
 
         for ($i = 1; $i < $quantity; $i++) {
-            $dateTime->modify($addition);
+            if ($month >= 12) {
+                $year++;
+                $month = 1;
+            } else {
+                $month++;
+            }
+            $currentDateTime = new DateTime("$year-$month-01");
+            $lastDayOfMonth = $currentDateTime->format('t');
+            $monthString = ($month < 10) ? "0$month" : $month;
 
-            $dates[$i]['date'] = $dateTime->format('Y-m-d');
-            $dates[$i]['day'] = $dateTime->format('d');
-            $dates[$i]['month'] = $dateTime->format('m');
-            $dates[$i]['year'] = $dateTime->format('Y');
+            if ($day > $lastDayOfMonth) {
+                $dates[$i]['date'] = "$year-$monthString-$lastDayOfMonth";
+                $dates[$i]['day'] = "$lastDayOfMonth";
+                $dates[$i]['month'] = "$monthString";
+                $dates[$i]['year'] = "$year";
+                continue;
+            }
+
+            $dates[$i]['date'] = "$year-$monthString-$day";
+            $dates[$i]['day'] = "$day";
+            $dates[$i]['month'] = "$monthString";
+            $dates[$i]['year'] = "$year";
         }
 
         return $dates;

@@ -211,7 +211,8 @@ $(function(e) {
 
 
 	//______Basic Data Table
-	$('#responsive-datatable').DataTable({
+	$('#responsive-datatable-invoices').DataTable({
+        paging: false,
 		scrollX: "100%",
 		language: pt_BR
 	});
