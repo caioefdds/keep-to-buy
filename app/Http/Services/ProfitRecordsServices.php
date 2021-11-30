@@ -4,7 +4,6 @@ namespace App\Http\Services;
 
 use App\Http\Utils\DateUtils;
 use App\Http\Utils\MoneyUtils;
-use App\Models\Profit;
 use App\Http\Constants\ProfitConstants;
 use App\Models\ProfitRecordItems;
 use App\Models\ProfitRecords;
@@ -15,6 +14,13 @@ use Throwable;
 
 class ProfitRecordsServices
 {
+    private $profitRecordRegistryServices;
+
+    public function __construct(ProfitRecordRegistryServices $profitRecordRegistryServices)
+    {
+        $this->profitRecordRegistryServices = $profitRecordRegistryServices;
+    }
+
     /**
      * Main function call to create [ProfitRecords]
      * @param $profitData
@@ -123,6 +129,7 @@ class ProfitRecordsServices
             ['p.type', 1],
             ['p.date', '<=', $dateEnd],
             ['p.deleted_at', null],
+            ['profit_record_items.deleted_at', null],
         ])
             ->leftJoin('profits as p', 'users.id', '=', 'p.user_id')
             ->leftJoin('profit_record_items', function ($join) use ($dateStart, $dateEnd) {
@@ -146,6 +153,7 @@ class ProfitRecordsServices
             ['p.type', 2],
             ['pr_i.date', '>=', $dateStart],
             ['pr_i.date', '<=', $dateEnd],
+            ['pr_i.deleted_at', null],
         ])
             ->leftJoin('profit_records as pr', 'pr.user_id', '=', 'users.id')
             ->leftJoin('profit_record_items as pr_i', 'pr.id', '=', 'pr_i.profit_record_id')
@@ -301,5 +309,31 @@ class ProfitRecordsServices
         ])->update([
             'status' => $status
         ]);
+    }
+
+    public function editRegistryProfitRecordItem($formData, $editData): bool
+    {
+        if ($formData['typeAction'] == 1) {
+            return $this->profitRecordRegistryServices->editSingleRegistry($editData, $formData);
+        } elseif ($formData['typeAction'] == 2) {
+            return $this->profitRecordRegistryServices->editPendingRegistry($editData, $formData);
+        } elseif ($formData['typeAction'] == 3) {
+            return $this->profitRecordRegistryServices->editAllRegistry($editData, $formData);
+        } else {
+            return false;
+        }
+    }
+
+    public function deleteRegistryProfitRecordItem($deleteData, $typeActionDelete): bool
+    {
+        if ($typeActionDelete == 1) {
+            return $this->profitRecordRegistryServices->deleteSingleRegistry($deleteData);
+        } elseif ($typeActionDelete == 2) {
+            return $this->profitRecordRegistryServices->deletePendingRegistry($deleteData);
+        } elseif ($typeActionDelete == 3) {
+            return $this->profitRecordRegistryServices->deleteAllRegistry($deleteData);
+        } else {
+            return false;
+        }
     }
 }

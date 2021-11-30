@@ -148,15 +148,42 @@
         </div>
 
         <div class="modal fade" id="modalDelete">
-            <div class="modal-dialog modal-dialog-centered text-center " role="document">
-                <div class="modal-content tx-size-sm">
-                    <div class="modal-body text-center p-4">
-                        <button aria-label="Close" class="btn-close" data-bs-dismiss="modal" @click="removeDeleteId()"><span aria-hidden="true">&times;</span></button>
-                        <i class="fe fe-x-square fs-100 text-danger lh-1 mb-5 d-inline-block"></i>
-                        <h4 class="text-danger tx-semibold">Você realmente deseja excluir?</h4>
-                        <p class="mg-b-20 mg-x-20">Ao excluir todos registros relacionados serão excluídos.</p>
-                        <button class="btn btn-danger pd-x-25" data-bs-dismiss="modal" @click="removeDeleteId()">Cancelar</button>
-                        <button class="btn btn-success pd-x-25" data-bs-dismiss="modal" @click="deleteRegistry()">Prosseguir</button>
+            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-body p-4">
+                        <button aria-label="Close" class="btn-close" data-bs-dismiss="modal" ><span aria-hidden="true">&times;</span></button>
+                        <div>
+                            <h4>Deletar dados</h4>
+                            <hr>
+                            <div class="row mb-5">
+                                <div class="col-lg">
+                                    <div class="form-group">
+                                        <div class="form-label">Como deseja deletar?</div>
+                                        <div class="custom-controls-stacked">
+                                            <label class="custom-control custom-radio">
+                                                <input type="radio" class="custom-control-input" name="example-radios" :value="1" v-model="typeActionDelete" checked>
+                                                <span class="custom-control-label">Deletar somente essa</span>
+                                            </label>
+                                            <label class="custom-control custom-radio">
+                                                <input type="radio" class="custom-control-input" name="example-radios" :value="2" v-model="typeActionDelete">
+                                                <span class="custom-control-label">Deletar todas pendentes</span>
+                                            </label>
+                                            <label class="custom-control custom-radio">
+                                                <input type="radio" class="custom-control-input" name="example-radios" :value="3" v-model="typeActionDelete">
+                                                <span class="custom-control-label">Deletar todas (incluindo as concluídas)</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-12 d-flex justify-content-end">
+                                    <button class="btn btn-danger pd-x-25 me-2" data-bs-dismiss="modal">Cancelar</button>
+                                    <button class="btn btn-success pd-x-25" @click="deleteRecord()">Salvar</button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -191,6 +218,7 @@ export default {
                 value: "",
                 typeAction: 1
             },
+            typeActionDelete: 1,
             errors: {}
         }
     },
@@ -218,6 +246,7 @@ export default {
             $('#modalDelete').modal('show');
         },
         update() {
+            this.formData.value = $('#money').val();
             let urlKey = 'invoice_items';
             if (parseInt(this.editData.record_type) === 1) {
                 urlKey = 'profit_records';
@@ -232,16 +261,19 @@ export default {
             }).catch((error) => {
             });
         },
-        delete() {
-            this.axios.post('/admin/expenses/delete', {
+        deleteRecord() {
+            let urlKey = 'invoice_items';
+            if (parseInt(this.deleteData.record_type) === 1) {
+                urlKey = 'profit_records';
+            }
+            this.axios.post('/admin/' + urlKey + '/deleteRegistry', {
                 data: {
-                    id: this.deleteId
+                    deleteData: this.deleteData,
+                    typeActionDelete: this.typeActionDelete
                 }
             }).then((response) => {
-                this.$toast.open(response.data.msg);
-                window.location.reload();
+                console.log(response)
             }).catch((error) => {
-                this.$toast.error(error.response.data.msg);
             });
         },
         getInvoice(month, year) {

@@ -11,6 +11,7 @@ use DateTime;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class InvoiceItemsController extends Controller
 {
@@ -64,6 +65,35 @@ class InvoiceItemsController extends Controller
         $formData = $requestData['formData'] ?? [];
         $editData = $requestData['editData'] ?? [];
 
-        $this->invoiceService->editRegistryInvoiceItem($formData, $editData);
+        DB::beginTransaction();
+        $edit = $this->invoiceService->editRegistryInvoiceItem($formData, $editData);
+        if (!$edit) {
+            DB::rollBack();
+            return Response::error([], 'Erro ao editar');
+        }
+        DB::commit();
+
+        return Response::success('', 'Editado com sucesso', 201);
+    }
+
+    public function deleteRegistry(Request $request)
+    {
+        if (empty($request->data)) {
+            return Response::error([], 'Dados inválidos');
+        }
+
+        $requestData = $request->data;
+        $deleteData = $requestData['deleteData'] ?? [];
+        $typeActionDelete = $requestData['typeActionDelete'] ?? null;
+
+        DB::beginTransaction();
+        $delete = $this->invoiceService->deleteRegistryInvoiceItem($deleteData, $typeActionDelete);
+        if (!$delete) {
+            DB::rollBack();
+            return Response::error([], 'Erro ao deletar');
+        }
+        DB::commit();
+
+        return Response::success('', 'Deletado com sucesso', 201);
     }
 }

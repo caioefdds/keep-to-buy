@@ -15,11 +15,11 @@ use Throwable;
 
 class InvoiceServices
 {
-    private $invoiceItemRegistryServices;
+    private $invoiceRegistryServices;
 
-    public function __construct(InvoiceItemRegistryServices $invoiceItemRegistryServices)
+    public function __construct(InvoiceItemRegistryServices $invoiceRegistryServices)
     {
-        $this->invoiceItemRegistryServices = $invoiceItemRegistryServices;
+        $this->invoiceRegistryServices = $invoiceRegistryServices;
     }
 
     public function getInvoicesAndRecords($month, $year): array
@@ -156,6 +156,7 @@ class InvoiceServices
             ['ex.type', 2],
             ['in_i.date', '>=', $dateStart],
             ['in_i.date', '<=', $dateEnd],
+            ['in_i.deleted_at', null],
         ])
             ->leftJoin('invoices as in', 'in.user_id', '=', 'users.id')
             ->leftJoin('invoice_items as in_i', 'in.id', '=', 'in_i.invoice_id')
@@ -389,11 +390,24 @@ class InvoiceServices
     public function editRegistryInvoiceItem($formData, $editData)
     {
         if ($formData['typeAction'] == 1) {
-            return $this->invoiceItemRegistryServices->editSingleRegistry($editData, $formData);
+            return $this->invoiceRegistryServices->editSingleRegistry($editData, $formData);
         } elseif ($formData['typeAction'] == 2) {
-            return $this->invoiceItemRegistryServices->editPendingRegistry($editData, $formData);
+            return $this->invoiceRegistryServices->editPendingRegistry($editData, $formData);
         } elseif ($formData['typeAction'] == 3) {
-            return $this->invoiceItemRegistryServices->editAllRegistry($editData, $formData);
+            return $this->invoiceRegistryServices->editAllRegistry($editData, $formData);
+        } else {
+            return false;
+        }
+    }
+
+    public function deleteRegistryInvoiceItem($deleteData, $typeActionDelete)
+    {
+        if ($typeActionDelete == 1) {
+            return $this->invoiceRegistryServices->deleteSingleRegistry($deleteData);
+        } elseif ($typeActionDelete == 2) {
+            return $this->invoiceRegistryServices->deletePendingRegistry($deleteData);
+        } elseif ($typeActionDelete == 3) {
+            return $this->invoiceRegistryServices->deleteAllRegistry($deleteData);
         } else {
             return false;
         }
