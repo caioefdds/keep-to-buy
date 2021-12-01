@@ -109,10 +109,10 @@
                                                             <!--                                    <td>{{ item.repeat }}</td>-->
                                                             <!--                                    <td>{{ item.repeat_times }}</td>-->
                                                             <td class="d-flex justify-content-center p-auto">
-                                                                <a href="#" class="icons-table text-warning" @click="editModal(item)">
+                                                                <a href="#" class="icons-table text-warning" @click="editModal(item)" data-toggle="tooltip" data-placement="top" title="Editar registro">
                                                                     <i class="side-menu__icon fa fa-edit"></i>
                                                                 </a>
-                                                                <a href="#" class="icons-table text-danger" @click="deleteModal(item)">
+                                                                <a href="#" class="icons-table text-danger" @click="deleteModal(item)" data-toggle="tooltip" data-placement="top" title="Deletar registro">
                                                                     <i class="side-menu__icon fa fa-trash"></i>
                                                                 </a>
                                                             </td>
