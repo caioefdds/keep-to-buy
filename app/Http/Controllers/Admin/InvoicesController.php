@@ -24,9 +24,9 @@ class InvoicesController extends Controller
     {
         $dateTime = date('Y-m-d');
         $date = DateUtils::getArrayFromDate($dateTime);
-        $dataTable = $this->getDataTableByDate($date[1], $date[0]);
+        [$dataTable, $totalProfits, $totalExpenses] = $this->getDataTableByDate($date[1], $date[0]);
 
-        return view('pages.index', compact('dataTable'));
+        return view('pages.index', compact('dataTable', 'totalProfits', 'totalExpenses'));
     }
 
     public function get(Request $request): JsonResponse
@@ -36,9 +36,13 @@ class InvoicesController extends Controller
             'year' => 'required'
         ]);
 
-        $data = $this->getDataTableByDate($validated['month'], $validated['year']);
+        [$data, $totalProfits, $totalExpenses] = $this->getDataTableByDate($validated['month'], $validated['year']);
 
-        return Response::success($data, '', 201);
+        return Response::success([
+            "data" => $data,
+            "totalProfits" => $totalProfits,
+            "totalExpenses" => $totalExpenses
+        ], '', 201);
     }
 
     public function getDataTableByDate($month, $year): array

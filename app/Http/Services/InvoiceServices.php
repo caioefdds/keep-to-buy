@@ -45,6 +45,9 @@ class InvoiceServices
         $dataProfitVariable = [];
         $dataExpenseVariable = [];
 
+        $totalProfits = 0;
+        $totalExpenses = 0;
+
         foreach ($profitFixed as $key => $value) {
             $dataProfitFixed[$key]['record_type'] = InvoiceConstants::RECORD_TYPE_PROFIT;
             $dataProfitFixed[$key]['name'] = $value['name'];
@@ -55,6 +58,7 @@ class InvoiceServices
             $dataProfitFixed[$key]['repeat'] = $value['repeat'];
             $dataProfitFixed[$key]['profit_id'] = $value['profit_id'];
             $dataProfitFixed[$key]['profit_record_item_id'] = $value['profit_record_item_id'];
+            $totalProfits += $value['value'];
         }
 
         foreach ($profitVariable as $key => $value) {
@@ -67,6 +71,7 @@ class InvoiceServices
             $dataProfitVariable[$key]['repeat'] = $value['repeat'];
             $dataProfitVariable[$key]['profit_id'] = $value['profit_id'];
             $dataProfitVariable[$key]['profit_record_item_id'] = $value['profit_record_item_id'];
+            $totalProfits += $value['value'];
         }
 
         foreach ($expenseFixed as $key => $value) {
@@ -79,6 +84,7 @@ class InvoiceServices
             $dataExpenseFixed[$key]['repeat'] = $value['repeat'];
             $dataExpenseFixed[$key]['expense_id'] = $value['expense_id'];;
             $dataExpenseFixed[$key]['invoice_item_id'] = $value['invoice_item_id'];
+            $totalExpenses += $value['value'];
         }
 
         foreach ($expenseVariable as $key => $value) {
@@ -91,12 +97,17 @@ class InvoiceServices
             $dataExpenseVariable[$key]['repeat'] = $value['repeat'];
             $dataExpenseVariable[$key]['expense_id'] = $value['expense_id'];
             $dataExpenseVariable[$key]['invoice_item_id'] = $value['invoice_item_id'];
+            $totalExpenses += $value['value'];
         }
 
         $profitArray = array_merge($dataProfitFixed, $dataProfitVariable);
         $expenseArray = array_merge($dataExpenseFixed, $dataExpenseVariable);
 
-        return (array_merge($profitArray, $expenseArray));
+        return [
+            (array_merge($profitArray, $expenseArray)),
+            MoneyUtils::floatToString($totalProfits),
+            MoneyUtils::floatToString($totalExpenses)
+        ];
     }
     /**
      * Main function call to create [Invoices]

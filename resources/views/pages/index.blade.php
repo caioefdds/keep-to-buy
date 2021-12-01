@@ -21,29 +21,37 @@
         </div>
     </div>
 
-    <div class="row justify-content-center">
-        <div class="col-lg-10">
-            <div class="card overflow-hidden">
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-12">
-                            <p-invoice
-                                data="{{ json_encode($dataTable ?? []) }}"
-                            ></p-invoice>
-                        </div>
-                    </div>
-                    <div class="row">
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+    <p-invoice
+        data="{{ json_encode($dataTable ?? []) }}"
+        profits="{{ json_encode($totalProfits) }}"
+        expenses="{{ json_encode($totalExpenses) }}"
+    ></p-invoice>
 @endsection('content')
 
 @section('scripts')
 
     <!-- INTERNAL SELECT2 JS -->
     <script src="{{ asset('assets/plugins/select2/select2.full.min.js') }}"></script>
+
+    <!-- COUNTERS JS-->
+    <script src="{{ asset('assets/plugins/counters/counterup.min.js') }}"></script>
+    <script src="{{ asset('assets/plugins/counters/waypoints.min.js') }}"></script>
+    <script src="{{ asset('assets/plugins/counters/counters-1.js') }}"></script>
+
+    <!-- C3 CHART JS -->
+    <script src="{{ asset('assets/plugins/charts-c3/d3.v5.min.js')}}"></script>
+    <script src="{{ asset('assets/plugins/charts-c3/c3-chart.js')}}"></script>
+
+    <!-- TIME COUNTER JS-->
+    <script src="{{ asset('assets/plugins/counters/jquery.missofis-countdown.js') }}"></script>
+    <script src="{{ asset('assets/plugins/counters/counter.js') }}"></script>
+
+    <!-- COUNT-DOWN JS-->
+    <script src="{{ asset('assets/plugins/counters/count-down.js') }}"></script>
+    <script src="{{ asset('assets/plugins/countdown/moment.min.js') }}"></script>
+    <script src="{{ asset('assets/plugins/countdown/moment-timezone.min.js') }}"></script>
+    <script src="{{ asset('assets/plugins/countdown/moment-timezone-with-data.min.js') }}"></script>
+    <script src="{{ asset('assets/plugins/countdown/countdowntime.js') }}"></script>
 
     <!-- DATA TABLE JS-->
     <script src="{{ asset('assets/plugins/datatable/js/jquery.dataTables.min.js') }}"></script>
