@@ -158,11 +158,7 @@ class ProfitRecordRegistryServices
             return false;
         }
 
-        $update = $this->__updateManyProfitRecordItem($dataUpdate, $where);
-
-        if (empty($update)) {
-            return false;
-        }
+        $this->__updateManyProfitRecordItem($dataUpdate, $where);
 
         return true;
     }
@@ -180,11 +176,7 @@ class ProfitRecordRegistryServices
             return false;
         }
 
-        $update = $this->__updateManyProfitRecordItem($dataUpdate, $where);
-
-        if (empty($update)) {
-            return false;
-        }
+        $this->__updateManyProfitRecordItem($dataUpdate, $where);
 
         return true;
     }
@@ -222,11 +214,7 @@ class ProfitRecordRegistryServices
             return false;
         }
 
-        $delete = $this->__deleteManyProfitRecordItem($where);
-
-        if (empty($delete)) {
-            return false;
-        }
+        $this->__deleteManyProfitRecordItem($where);
 
         return true;
     }
@@ -243,11 +231,7 @@ class ProfitRecordRegistryServices
             return false;
         }
 
-        $delete = $this->__deleteManyProfitRecordItem($where);
-
-        if (empty($delete)) {
-            return false;
-        }
+        $this->__deleteManyProfitRecordItem($where);
 
         return true;
     }

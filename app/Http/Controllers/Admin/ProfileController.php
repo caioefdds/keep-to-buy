@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\ProfileRequest;
 use App\Http\Utils\DateUtils;
 use App\Http\Utils\Response;
+use App\Http\Utils\UserUtils;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -51,6 +52,14 @@ class ProfileController extends Controller
         if (!$update) {
             return Response::error([], "Erro ao atualizar.");
         }
+
+        if (!empty($profileData['image'])) {
+            Session::put('image', $profileData['image']);
+        }
+
+        $nameExhibition = UserUtils::getFirstAndLastName($profileData['name']);
+
+        Session::put('nameExhibition', $nameExhibition);
 
         return Response::success([], "Perfil editado com sucesso!", 201);
     }

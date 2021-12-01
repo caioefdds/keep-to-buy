@@ -51,7 +51,7 @@
                         <button aria-label="Close" class="btn-close" data-bs-dismiss="modal" @click="removeDeleteId()"><span aria-hidden="true">&times;</span></button>
                         <i class="fe fe-x-square fs-100 text-danger lh-1 mb-5 d-inline-block"></i>
                         <h4 class="text-danger tx-semibold">Você realmente deseja excluir?</h4>
-                        <p class="mg-b-20 mg-x-20">Ao excluir todos registros relacionados serão excluídos.</p>
+                        <p class="mg-b-20 mg-x-20">Ao prosseguir todos registros relacionados serão excluídos.</p>
                         <button class="btn btn-danger pd-x-25" data-bs-dismiss="modal" @click="removeDeleteId()">Cancelar</button>
                         <button class="btn btn-success pd-x-25" data-bs-dismiss="modal" @click="deleteRegistry()">Prosseguir</button>
                     </div>

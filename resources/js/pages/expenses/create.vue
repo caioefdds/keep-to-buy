@@ -81,9 +81,9 @@
                                 <label class="form-label">Frequência da repetição</label>
                                 <select class="form-control form-select select2" data-bs-placeholder="Selecione um" v-model="formData.repeat_type">
                                     <option label="Selecione" disabled></option>
-                                    <option value="1">Semanalmente</option>
+<!--                                    <option value="1">Semanalmente</option>-->
                                     <option value="2">Mensalmente</option>
-                                    <option value="3">Anualmente</option>
+<!--                                    <option value="3">Anualmente</option>-->
                                 </select>
                             </div>
                         </div>
@@ -182,7 +182,7 @@ export default {
                 this.$toast.open(result.data.msg);
 
                 if (redirect) {
-                    // window.location.href = '/admin/expenses';
+                    window.location.href = '/admin/expenses';
                 }
             }).catch((error) => {
                 this.getErrors(error.response.data);
@@ -216,8 +216,5 @@ export default {
 .card-pay .tabs-menu li a.active {
     background: #de223d !important;
     color: #fff;
-}
-.card-pay .tabs-menu li a {
-    color: black
 }
 </style>

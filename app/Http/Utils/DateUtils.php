@@ -75,18 +75,24 @@ class DateUtils
 
     public static function dateToStringPrefixedDate($date, $month, $year)
     {
-        $currentDateTime = new DateTime("$year-$month-01");
+        $dateTimeTest = new DateTime($date);
+        $dayTest = $dateTimeTest->format('d');
+        $dateTest = "$year-$month-$dayTest";
 
-        $day = $currentDateTime->format('d');
+        $currentDateTime = new DateTime("$year-$month-01");
+        if (self::validateDate($dateTest)) {
+            $currentDateTime = new DateTime("$year-$month-$dayTest");
+        }
+
         $month = $currentDateTime->format('m');
         $year = $currentDateTime->format('Y');
         $lastDayOfMonth = $currentDateTime->format('t');
 
-        if ($day > $lastDayOfMonth) {
+        if ($dayTest > $lastDayOfMonth) {
             return "$lastDayOfMonth/$month/$year";
         }
 
-        return "$day/$month/$year";
+        return "$dayTest/$month/$year";
     }
 
     public static function dateToString($date)

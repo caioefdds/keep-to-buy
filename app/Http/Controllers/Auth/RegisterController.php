@@ -59,7 +59,7 @@ class RegisterController extends LoginController
                 'password' => $validated['password'],
             ], $request);
 
-            return Response::success([], "Usuário criado com sucesso");
+            return Response::success([], "Usuário criado com sucesso", 201);
         }
         return Response::error([], "Erro ao criar usuário, certifique-se que os dados estão corretos.");
     }

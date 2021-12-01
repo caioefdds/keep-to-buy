@@ -111,7 +111,7 @@
 
                                 <div class="col-lg">
                                     <label class="form-label">Valor</label>
-                                    <input type="text" id="money" :class="'form-control ' + errors.value" v-model="formData.value">
+                                    <input type="text" id="money" :class="'form-control ' + errors.value">
                                 </div>
 
                                 <div class="col-lg">
@@ -239,6 +239,7 @@ export default {
             this.editData = data;
             this.formData.name = data.name;
             this.formData.value = data.value;
+            $('#money').val(this.formData.value);
             $('#modalEdit').modal('show');
         },
         deleteModal(data) {
@@ -279,7 +280,7 @@ export default {
                 if (response.status === 201) {
                     this.getInvoice(this.dateMonth, this.dateYear);
                     this.$toast.open(response.data.msg);
-                    $('#modalEdit').modal('hide');
+                    $('#modalDelete').modal('hide');
                 }
             }).catch((error) => {
             });

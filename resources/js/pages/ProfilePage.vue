@@ -95,7 +95,11 @@ export default {
         }
     },
     mounted() {
-        $(this.selectors.dateInput).val(this.formData.birth_date);
+        if (this.formData.birth_date == null || this.formData.birth_date === false) {
+            $(this.selectors.dateInput).val('');
+        } else {
+            $(this.selectors.dateInput).val(this.formData.birth_date);
+        }
     },
     methods: {
         openImageInput() {

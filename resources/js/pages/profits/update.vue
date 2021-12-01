@@ -201,7 +201,4 @@ export default {
     background: #006bab !important;
     color: #fff;
 }
-.card-pay .tabs-menu li a {
-    color: black
-}
 </style>

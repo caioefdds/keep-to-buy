@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 
 
 use App\Http\Utils\Response;
+use App\Http\Utils\UserUtils;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -44,10 +45,7 @@ class LoginController
     public function setSessionVariables()
     {
         $userData = User::find(Auth::id());
-        $partes = explode(' ', $userData['name']);
-        $primeiroNome = array_shift($partes);
-        $ultimoNome = array_pop($partes);
-        $nameExhibition = $primeiroNome . " " . $ultimoNome;
+        $nameExhibition = UserUtils::getFirstAndLastName($userData['name']);
 
         Session::put('nameExhibition', $nameExhibition);
         Session::put('image', ($userData['image'] ?? null));

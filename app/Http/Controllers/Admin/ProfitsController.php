@@ -129,7 +129,7 @@ class ProfitsController extends Controller
             $result[$key] = $item;
             $result[$key]['value'] = MoneyUtils::floatToString($item['value']);
             $result[$key]['date'] = DateUtils::dateToString($item['date']);
-            $result[$key]['status'] = ($item['date'] == 1) ? "PAGO" : "PENDENTE";
+            $result[$key]['status'] = ($item['status'] == 1) ? "RECEBIDO" : "PENDENTE";
             $result[$key]['repeat'] = ($item['repeat']) ? "SIM" : "NÃO";
         }
 

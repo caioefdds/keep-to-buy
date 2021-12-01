@@ -158,11 +158,7 @@ class InvoiceItemRegistryServices
             return false;
         }
 
-        $update = $this->__updateManyInvoiceItem($dataUpdate, $where);
-
-        if (empty($update)) {
-            return false;
-        }
+        $this->__updateManyInvoiceItem($dataUpdate, $where);
 
         return true;
     }
@@ -180,11 +176,7 @@ class InvoiceItemRegistryServices
             return false;
         }
 
-        $update = $this->__updateManyInvoiceItem($dataUpdate, $where);
-
-        if (empty($update)) {
-            return false;
-        }
+        $this->__updateManyInvoiceItem($dataUpdate, $where);
 
         return true;
     }
@@ -222,11 +214,7 @@ class InvoiceItemRegistryServices
             return false;
         }
 
-        $delete = $this->__deleteManyInvoiceItem($where);
-
-        if (empty($delete)) {
-            return false;
-        }
+        $this->__deleteManyInvoiceItem($where);
 
         return true;
     }
@@ -243,11 +231,7 @@ class InvoiceItemRegistryServices
             return false;
         }
 
-        $delete = $this->__deleteManyInvoiceItem($where);
-
-        if (empty($delete)) {
-            return false;
-        }
+        $this->__deleteManyInvoiceItem($where);
 
         return true;
     }

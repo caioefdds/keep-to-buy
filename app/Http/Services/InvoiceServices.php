@@ -142,7 +142,11 @@ class InvoiceServices
             })
             ->select(
                 'ex.date', 'invoice_items.id as invoice_item_id', 'ex.type', 'ex.repeat', 'ex.id as expense_id',
-                DB::raw("(CASE WHEN invoice_items.status = 1 THEN 1 ELSE 2 END) as invoice_item_status"),
+                DB::raw("(CASE
+                WHEN invoice_items.status = 1 THEN 1
+                WHEN invoice_items.status = 2 THEN 2
+                WHEN ex.status = 1 THEN 1
+                ELSE 2 END) as invoice_item_status"),
                 DB::raw("(CASE WHEN invoice_items.value != ex.value THEN invoice_items.value ELSE ex.value END) as value"),
                 DB::raw("(CASE WHEN invoice_items.name != ex.name THEN invoice_items.name ELSE ex.name END) as name"),
             )
