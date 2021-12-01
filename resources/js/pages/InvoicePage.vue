@@ -33,94 +33,92 @@
                         <div class="row">
                             <div class="col-12">
                                 <div class="row">
-                                    <div class="row row-sm">
-                                        <div class="col-lg-12">
-                                            <div class="card">
-                                                <div class="card-body">
-                                                    <div class="col-12 d-flex justify-content-center">
-                                                        <span class="year_name text-primary">{{ this.dateYear }}</span>
-                                                    </div>
-                                                    <div class="col-12 mb-5">
-                                                        <div class="d-flex justify-content-center">
-                                                            <div class="d-flex">
-                                                                <button class="arrow_month_button" @click="modifyDate(false)">
-                                                                    <i class="fa fa-chevron-left"></i>
-                                                                </button>
-                                                            </div>
-                                                            <div class="month_name">
-                                                                <button class="month_button">
-                                                                    <i aria-label="fa fa-calendar-o" class="fa fa-calendar-o"></i>&nbsp&nbsp
-                                                                    {{ this.dateMonthName }}
-                                                                </button>
-                                                            </div>
-                                                            <div class="d-flex">
-                                                                <button class="arrow_month_button" @click="modifyDate(true)">
-                                                                    <i class="fa fa-chevron-right"></i>
-                                                                </button>
-                                                            </div>
+                                    <div class="col-lg-12">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <div class="col-12 d-flex justify-content-center">
+                                                    <span class="year_name text-primary">{{ this.dateYear }}</span>
+                                                </div>
+                                                <div class="col-12 mb-5">
+                                                    <div class="d-flex justify-content-center">
+                                                        <div class="d-flex">
+                                                            <button class="arrow_month_button" @click="modifyDate(false)">
+                                                                <i class="fa fa-chevron-left"></i>
+                                                            </button>
+                                                        </div>
+                                                        <div class="month_name">
+                                                            <button class="month_button">
+                                                                <i aria-label="fa fa-calendar-o" class="fa fa-calendar-o"></i>&nbsp&nbsp
+                                                                {{ this.dateMonthName }}
+                                                            </button>
+                                                        </div>
+                                                        <div class="d-flex">
+                                                            <button class="arrow_month_button" @click="modifyDate(true)">
+                                                                <i class="fa fa-chevron-right"></i>
+                                                            </button>
                                                         </div>
                                                     </div>
-                                                    <div class="table-responsive">
-                                                        <table class="table table-bordered text-nowrap border-bottom w-100" id="responsive-datatable-invoices">
-                                                            <thead>
-                                                            <tr>
-                                                                <th class="wd-15p border-bottom-0">Situação</th>
-                                                                <th class="wd-15p border-bottom-0">Data</th>
-                                                                <th class="wd-20p border-bottom-0">Descrição</th>
-                                                                <!--                                    <th class="wd-15p border-bottom-0">Categoria</th>-->
-                                                                <th class="wd-15p border-bottom-0">Valor</th>
-                                                                <!--                                    <th class="wd-15p border-bottom-0">Parcelas</th>-->
-                                                                <th class="wd-15p border-bottom-0">Ações</th>
-                                                            </tr>
-                                                            </thead>
-                                                            <tbody>
-                                                            <tr v-for="item in dataTable" :class="(parseInt(item.record_type) === 1) ? 'bg-profit' : 'bg-expense'">
-                                                                <td v-if="parseInt(item.record_type) === 1">
-                                                                    <div class="d-flex" v-if="parseInt(item.status) === 1">
-                                                                        <a href="#" class="icons-table-b text-success" @click="receiveRegistry(item)">
-                                                                            <i class="side-menu__icon fa fa-money"></i>
-                                                                        </a>
-                                                                        <div class="m-auto">RECEBIDO</div>
-                                                                    </div>
-                                                                    <div class="d-flex" v-else>
-                                                                        <a href="#" class="icons-table-b text-dark" @click="receiveRegistry(item)">
-                                                                            <i class="side-menu__icon fa fa-money"></i>
-                                                                        </a>
-                                                                        <div class="m-auto">PENDENTE</div>
-                                                                    </div>
-                                                                </td>
-                                                                <td v-else>
-                                                                    <div class="d-flex" v-if="parseInt(item.status) === 1">
-                                                                        <a href="#" class="icons-table-b text-danger" @click="payRegistry(item)">
-                                                                            <i class="side-menu__icon fa fa-money"></i>
-                                                                        </a>
-                                                                        <div class="m-auto">PAGO</div>
-                                                                    </div>
-                                                                    <div class="d-flex" v-else>
-                                                                        <a href="#" class="icons-table-b text-dark" @click="payRegistry(item)">
-                                                                            <i class="side-menu__icon fa fa-money"></i>
-                                                                        </a>
-                                                                        <div class="m-auto">PENDENTE</div>
-                                                                    </div>
-                                                                </td>
-                                                                <td>{{ item.date }}</td>
-                                                                <td>{{ item.name }}</td>
-                                                                <!--                                    <td>{{ item.category }}</td>-->
-                                                                <td>{{ item.value }}</td>
-                                                                <!--                                    <td>{{ item.repeat }}</td>-->
-                                                                <!--                                    <td>{{ item.repeat_times }}</td>-->
-                                                                <td class="d-flex justify-content-center p-auto">
-                                                                    <a href="#" class="icons-table text-warning" @click="editModal(item)">
-                                                                        <i class="side-menu__icon fa fa-edit"></i>
+                                                </div>
+                                                <div class="table-responsive">
+                                                    <table class="table table-bordered text-nowrap border-bottom w-100" id="responsive-datatable-invoices">
+                                                        <thead>
+                                                        <tr>
+                                                            <th class="wd-15p border-bottom-0">Situação</th>
+                                                            <th class="wd-15p border-bottom-0">Data</th>
+                                                            <th class="wd-20p border-bottom-0">Descrição</th>
+                                                            <!--                                    <th class="wd-15p border-bottom-0">Categoria</th>-->
+                                                            <th class="wd-15p border-bottom-0">Valor</th>
+                                                            <!--                                    <th class="wd-15p border-bottom-0">Parcelas</th>-->
+                                                            <th class="wd-15p border-bottom-0">Ações</th>
+                                                        </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                        <tr v-for="item in dataTable" :class="(parseInt(item.record_type) === 1) ? 'bg-profit' : 'bg-expense'">
+                                                            <td v-if="parseInt(item.record_type) === 1">
+                                                                <div class="d-flex" v-if="parseInt(item.status) === 1">
+                                                                    <a href="#" class="icons-table-b text-success" @click="receiveRegistry(item)">
+                                                                        <i class="side-menu__icon fa fa-money"></i>
                                                                     </a>
-                                                                    <a href="#" class="icons-table text-danger" @click="deleteModal(item)">
-                                                                        <i class="side-menu__icon fa fa-trash"></i>
+                                                                    <div class="my-auto">RECEBIDO</div>
+                                                                </div>
+                                                                <div class="d-flex" v-else>
+                                                                    <a href="#" class="icons-table-b text-dark" @click="receiveRegistry(item)">
+                                                                        <i class="side-menu__icon fa fa-money"></i>
                                                                     </a>
-                                                                </td>
-                                                            </tr>
-                                                            </tbody>
-                                                        </table>
-                                                    </div>
+                                                                    <div class="my-auto">PENDENTE</div>
+                                                                </div>
+                                                            </td>
+                                                            <td v-else>
+                                                                <div class="d-flex" v-if="parseInt(item.status) === 1">
+                                                                    <a href="#" class="icons-table-b text-danger" @click="payRegistry(item)">
+                                                                        <i class="side-menu__icon fa fa-money"></i>
+                                                                    </a>
+                                                                    <div class="my-auto">PAGO</div>
+                                                                </div>
+                                                                <div class="d-flex" v-else>
+                                                                    <a href="#" class="icons-table-b text-dark" @click="payRegistry(item)">
+                                                                        <i class="side-menu__icon fa fa-money"></i>
+                                                                    </a>
+                                                                    <div class="my-auto">PENDENTE</div>
+                                                                </div>
+                                                            </td>
+                                                            <td>{{ item.date }}</td>
+                                                            <td>{{ item.name }}</td>
+                                                            <!--                                    <td>{{ item.category }}</td>-->
+                                                            <td>{{ item.value }}</td>
+                                                            <!--                                    <td>{{ item.repeat }}</td>-->
+                                                            <!--                                    <td>{{ item.repeat_times }}</td>-->
+                                                            <td class="d-flex justify-content-center p-auto">
+                                                                <a href="#" class="icons-table text-warning" @click="editModal(item)">
+                                                                    <i class="side-menu__icon fa fa-edit"></i>
+                                                                </a>
+                                                                <a href="#" class="icons-table text-danger" @click="deleteModal(item)">
+                                                                    <i class="side-menu__icon fa fa-trash"></i>
+                                                                </a>
+                                                            </td>
+                                                        </tr>
+                                                        </tbody>
+                                                    </table>
                                                 </div>
                                             </div>
                                         </div>
