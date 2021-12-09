@@ -83,7 +83,7 @@ export default {
             this.deleteId = null;
         },
         deleteRegistry() {
-            this.axios.post('/admin/profits/delete', {
+            this.axios.delete('/admin/profits/delete', {
                 data: {
                     id: this.deleteId
                 }
